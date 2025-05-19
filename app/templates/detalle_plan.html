@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ plan.nombre }}{% endblock %}
+{% block content %}
+<h2>{{ plan.nombre }}</h2>
+<p><strong>Descripción:</strong> {{ plan.descripcion }}</p>
+<p><strong>Precio:</strong> ${{ plan.precio }}</p>
+<p><strong>Duración:</strong> {{ plan.duracion }} horas</p>
+
+{% if imagenes %}
+  <h3>Galería de Imágenes</h3>
+  <div style="display: flex; gap: 10px;">
+    {% for img in imagenes %}
+      <img src="{{ img.url }}" alt="imagen del plan" width="200">
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if ubicacion %}
+  <h3>Ubicación</h3>
+  <div id="map" style="height: 300px;"></div>
+  <p><strong>{{ ubicacion.nombre }}</strong> - {{ ubicacion.direccion }}</p>
+{% endif %}
+
+{% if usuario_id %}
+  <p><a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}">Agregar a favoritos</a></p>
+{% endif %}
+
+<h3>Reseñas</h3>
+<ul>
+  {% for r in resenas %}
+    <li><strong>{{ r.calificacion }}⭐</strong> - {{ r.comentario }}</li>
+  {% endfor %}
+</ul>
+
+<a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}">Escribir reseña</a>
+<a href="{{ url_for('planes.agregar_imagen', plan_id=plan.id) }}">Agregar imagen</a>
+
+
+
+{% if ubicacion %}
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <script>
+    const mapa = L.map('map').setView([{{ ubicacion.coordenadas.split(',')[0] }}, {{ ubicacion.coordenadas.split(',')[1] }}], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+    }).addTo(mapa);
+    L.marker([{{ ubicacion.coordenadas.split(',')[0] }}, {{ ubicacion.coordenadas.split(',')[1] }}]).addTo(mapa)
+      .bindPopup('{{ ubicacion.nombre }}').openPopup();
+  </script>
+{% endif %}
+{% endblock %}

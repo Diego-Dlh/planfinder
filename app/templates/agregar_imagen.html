@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Agregar Imagen{% endblock %}
+{% block content %}
+<section class="formulario-contenedor">
+  <h2>Agregar Imagen al Plan</h2>
+  <form method="POST" class="formulario-estilizado">
+      <label for="url">URL de la imagen:</label>
+      <input type="url" name="url" required>
+
+      <button type="submit" class="btn-filtrar">Guardar</button>
+  </form>
+
+  <div style="margin-top: 1rem;">
+    <a href="{{ url_for('planes.detalle', plan_id=plan_id) }}" class="btn-secundario">← Volver al detalle</a>
+  </div>
+</section>
+{% endblock %}

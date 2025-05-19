@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Reseñas{% endblock %}
+{% block content %}
+<h2>Reseñas del Plan</h2>
+<ul>
+  {% for r in resenas %}
+    <li><strong>{{ r.calificacion }}⭐</strong> - {{ r.comentario }}</li>
+  {% endfor %}
+</ul>
+
+<h3>Escribir una Reseña</h3>
+<form method="POST">
+    <label>Calificación:</label>
+    <input type="number" name="calificacion" min="1" max="5" required>
+    <label>Comentario:</label>
+    <textarea name="comentario"></textarea>
+    <button type="submit">Enviar</button>
+</form>
+{% endblock %}

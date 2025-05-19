@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Nuevo Plan{% endblock %}
+{% block content %}
+<section class="formulario-contenedor">
+  <h2>Crear Nuevo Plan</h2>
+  <form method="POST" class="formulario-estilizado">
+      <label>Nombre:</label>
+      <input type="text" name="nombre" required>
+
+      <label>Descripción:</label>
+      <textarea name="descripcion" required></textarea>
+
+      <label>Precio:</label>
+      <input type="number" name="precio" step="0.01" required>
+
+      <label>Duración (horas):</label>
+      <input type="number" name="duracion" step="0.5" required>
+
+      <label>Categoría ID:</label>
+      <input type="number" name="categoria_id" required>
+
+      <label>Ubicación ID:</label>
+      <input type="number" name="ubicacion_id" required>
+
+      <button type="submit" class="btn-filtrar">Crear</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Mi Perfil{% endblock %}
+
+{% block content %}
+<h2>Mi Perfil</h2>
+
+<form method="POST">
+    <label>Nombre:</label>
+    <input type="text" name="nombre" value="{{ usuario.nombre }}" required>
+
+    <label>Email:</label>
+    <input type="email" value="{{ usuario.email }}" disabled>
+
+    <label>Tipo de usuario:</label>
+    <input type="text" value="{{ usuario.tipo.value }}" disabled>
+
+    <label>Nueva contraseña (opcional):</label>
+    <input type="password" name="contrasena">
+
+    <label>Foto de perfil (URL):</label>
+    <input type="url" name="foto_perfil" value="{{ usuario.foto_perfil or '' }}">
+
+    {% if usuario.foto_perfil %}
+        <p>Vista previa:</p>
+        <img src="{{ usuario.foto_perfil }}" alt="foto perfil" width="150">
+    {% endif %}
+
+    <button type="submit">Guardar cambios</button>
+</form>
+{% endblock %}

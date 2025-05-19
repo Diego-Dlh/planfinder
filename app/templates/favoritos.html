@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Mis Favoritos{% endblock %}
+{% block content %}
+<h2>Planes Favoritos</h2>
+<ul>
+  {% for f in favoritos %}
+    <li>{{ f.plan.nombre }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

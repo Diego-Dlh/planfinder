@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Gestión de Planes{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+    <header class="header-principal">
+        <div class="contenedor-header">
+            <h1>Turismo Planes</h1>
+            <nav class="nav-principal">
+                <a href="{{ url_for('main.home') }}">Inicio</a>
+                <a href="{{ url_for('planes.listar') }}">Planes</a>
+                <a href="{{ url_for('favoritos.listar') }}">Favoritos</a>
+                <a href="{{ url_for('auth.login') }}">Iniciar Sesión</a>
+                <a href="{{ url_for('usuarios.perfil') }}">Mi Perfil</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="mensajes">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
+<footer>
+    <p>&copy; 2023 Turismo Planes. Todos los derechos reservados.</p>
