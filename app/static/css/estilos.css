@@ -1,130 +1,192 @@
+/* Importar fuente moderna */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
 body {
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: #f4f7fa;
     margin: 0;
     padding: 0;
     color: #333;
+    line-height: 1.6;
 }
 
+/* =========== HEADER & NAV =========== */
 header {
     background-color: #0077b6;
     color: white;
-    padding: 1rem;
+    padding: 1rem 2rem;
     text-align: center;
 }
 
-nav {
-    margin-top: 0.5rem;
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
 }
 
-nav a {
+.nav-principal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.nav-principal a {
     color: white;
     text-decoration: none;
-    margin: 0 15px;
     font-weight: 600;
+    transition: color 0.2s ease;
 }
 
-nav a:hover {
+.nav-principal a:hover {
     text-decoration: underline;
 }
 
+/* =========== MAIN STRUCTURE =========== */
 main {
-    padding: 2rem;
     max-width: 1200px;
     margin: auto;
+    padding: 2rem 1rem;
 }
 
-.bienvenida {
-    text-align: center;
-    margin-bottom: 2rem;
+section {
+    margin-bottom: 3rem;
 }
 
-.bienvenida h2 {
-    font-size: 2rem;
+/* =========== TITULOS =========== */
+h2, h3, h4 {
     color: #023e8a;
-}
-
-.filtro-container {
-    background-color: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-}
-
-.formulario-filtros .campo {
+    font-weight: 700;
     margin-bottom: 1rem;
 }
 
-.formulario-filtros label {
+/* =========== FORMULARIOS =========== */
+.formulario-contenedor {
+    background-color: #fff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    max-width: 600px;
+    margin: auto;
+}
+
+.formulario-contenedor h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+}
+
+.formulario-estilizado label {
     display: block;
-    margin-bottom: 0.3rem;
-    font-weight: bold;
+    margin: 1rem 0 0.4rem 0;
+    font-weight: 600;
 }
 
-.formulario-filtros select,
-.formulario-filtros input {
+.formulario-estilizado input,
+.formulario-estilizado textarea,
+.formulario-estilizado select {
     width: 100%;
-    padding: 0.6rem;
-    border-radius: 4px;
+    padding: 0.75rem;
+    border-radius: 6px;
     border: 1px solid #ccc;
-}
-
-.btn-filtrar {
-    background-color: #0096c7;
-    color: white;
-    border: none;
-    padding: 0.6rem 1rem;
     font-size: 1rem;
-    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* =========== BOTONES =========== */
+.btn, form button,
+.btn-detalles,
+.btn-secundario {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    text-decoration: none;
     cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
 }
 
-.btn-filtrar:hover {
+.btn-detalles, form button {
     background-color: #0077b6;
+    color: white;
+    font-weight: 600;
 }
 
-.planes-encontrados {
-    margin-top: 2rem;
+.btn-detalles:hover, form button:hover {
+    background-color: #023e8a;
 }
 
+.btn-secundario {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.btn-secundario:hover {
+    background-color: #ccc;
+}
+
+/* =========== FILTROS =========== */
+.filtro-container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.formulario-filtros .campo {
+    margin-bottom: 1.2rem;
+}
+
+/* =========== PLANES (Tarjetas) =========== */
 .grid-planes {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+    gap: 2rem;
 }
 
 .tarjeta-plan {
     background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    transition: transform 0.2s ease;
+}
+
+.tarjeta-plan:hover {
+    transform: translateY(-6px);
 }
 
 .tarjeta-plan img {
     width: 100%;
-    height: 180px;
+    height: 200px;
     object-fit: cover;
 }
 
 .info-plan {
     padding: 1rem;
-    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 }
 
 .info-plan h4 {
     margin: 0 0 0.5rem 0;
     color: #023e8a;
+    font-size: 1.2rem;
 }
 
 .precio {
-    font-weight: bold;
+    font-weight: 700;
     color: #0096c7;
+    margin-bottom: 0.5rem;
 }
 
 .acciones {
@@ -134,70 +196,145 @@ main {
     flex-wrap: wrap;
 }
 
-.btn-detalles,
-.btn-secundario {
-    text-decoration: none;
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    text-align: center;
+/* =========== DETALLES DE PLAN =========== */
+.detalle-plan {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    max-width: 800px;
+    margin: auto;
 }
 
-.btn-detalles {
-    background-color: #0077b6;
-    color: white;
+.galeria-imagenes {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
 }
 
-.btn-secundario {
-    background-color: #e0e0e0;
-    color: #333;
+.img-mini {
+    width: 180px;
+    border-radius: 8px;
+    object-fit: cover;
 }
 
-.btn-detalles:hover {
-    background-color: #023e8a;
+/* =========== ESTRELLAS RESEÑAS =========== */
+.estrellas {
+    direction: rtl;
+    display: inline-flex;
+    gap: 5px;
+    margin-top: 0.5rem;
 }
 
-.btn-secundario:hover {
-    background-color: #ccc;
+.estrellas input[type="radio"] {
+    display: none;
 }
 
+.estrellas label {
+    font-size: 2rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.estrellas input[type="radio"]:checked ~ label,
+.estrellas label:hover,
+.estrellas label:hover ~ label {
+    color: #FFD700;
+}
+
+/* =========== RESEÑAS =========== */
+.lista-resenas {
+    list-style: none;
+    padding-left: 0;
+}
+
+.lista-resenas li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ddd;
+}
+
+/* =========== MENSAJES FLASH =========== */
 .mensajes {
     background-color: #ffe8cc;
     border-left: 5px solid #ff9100;
     padding: 1rem;
-    margin-bottom: 1rem;
-}
-.formulario-contenedor {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    max-width: 600px;
-    margin: auto;
-}
-
-.formulario-contenedor h2 {
-    color: #023e8a;
-    text-align: center;
     margin-bottom: 1.5rem;
 }
 
-.formulario-estilizado label {
-    display: block;
-    margin: 0.8rem 0 0.3rem 0;
-    font-weight: bold;
+/* =========== FOOTER =========== */
+.footer {
+    text-align: center;
+    padding: 2rem;
+    background-color: #0077b6;
+    color: white;
+    margin-top: 3rem;
 }
 
-.formulario-estilizado input,
-.formulario-estilizado textarea {
-    width: 100%;
-    padding: 0.6rem;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
+/* =========== ENLACES =========== */
+.enlace-simple {
+    color: #0077b6;
+    text-decoration: none;
+    font-weight: 500;
 }
 
-.formulario-estilizado textarea {
-    resize: vertical;
-    min-height: 100px;
+.enlace-simple:hover {
+    text-decoration: underline;
+}
+
+/* =========== RESPONSIVO =========== */
+@media (max-width: 768px) {
+    .grid-planes {
+        grid-template-columns: 1fr;
+    }
+
+    .nav-principal {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+header {
+  background-color: #0077b6;
+  color: white;
+  padding: 0.8rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header h1 {
+  font-size: 1.5rem;
+}
+
+.nav-principal {
+  display: flex;
+  gap: 1rem;
+}
+body {
+  background: linear-gradient(180deg, #f4f7fa 0%, #eaf4fb 100%);
+}
+.tarjeta-plan {
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.tarjeta-plan:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.tarjeta-plan img {
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+.btn-detalles {
+  background: linear-gradient(145deg, #0096c7, #0077b6);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.btn-detalles:hover {
+  transform: translateY(-2px);
 }

@@ -1,12 +1,11 @@
+<!-- home.html -->
 {% extends "base.html" %}
 {% block title %}Inicio{% endblock %}
-
 {% block content %}
 <section class="bienvenida">
   <h2>Explora tus próximas aventuras</h2>
   <p>Descubre y reserva planes turísticos increíbles según tus gustos y presupuesto.</p>
 </section>
-
 <section class="filtro-container">
   <h3>Filtrar planes turísticos</h3>
   <form method="get" class="formulario-filtros">
@@ -19,7 +18,6 @@
         {% endfor %}
       </select>
     </div>
-
     <div class="campo">
       <label for="ubicacion_id">Ubicación:</label>
       <select name="ubicacion_id" id="ubicacion_id">
@@ -29,27 +27,23 @@
         {% endfor %}
       </select>
     </div>
-
     <div class="campo">
       <label for="precio_min">Precio mínimo:</label>
       <input type="number" name="precio_min" id="precio_min" step="0.01" value="{{ request.args.get('precio_min', '') }}">
     </div>
-
     <div class="campo">
       <label for="precio_max">Precio máximo:</label>
       <input type="number" name="precio_max" id="precio_max" step="0.01" value="{{ request.args.get('precio_max', '') }}">
     </div>
-
     <button type="submit" class="btn-filtrar">Buscar</button>
   </form>
 </section>
-
 <section class="planes-encontrados">
   <h3>Planes disponibles</h3>
   <div class="grid-planes">
     {% for plan in planes %}
     <div class="tarjeta-plan">
-      <img src="{{ plan.imagenes[0].url }}" alt="imagen del plan" width="200">
+      <img src="{{ plan.imagenes[0].url }}" alt="imagen del plan">
       <div class="info-plan">
         <h4>{{ plan.nombre }}</h4>
         <p class="precio">${{ plan.precio }}</p>
@@ -57,8 +51,8 @@
         <div class="acciones">
           <a href="{{ url_for('planes.detalle', plan_id=plan.id) }}" class="btn-detalles">Ver detalles</a>
           {% if usuario_id %}
-            <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn-secundario">Favorito</a>
-            <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn-secundario">Reseñas</a>
+          <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn-secundario">Favorito</a>
+          <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn-secundario">Reseñas</a>
           {% endif %}
         </div>
       </div>

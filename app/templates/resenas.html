@@ -1,19 +1,29 @@
 {% extends "base.html" %}
 {% block title %}Reseñas{% endblock %}
 {% block content %}
-<h2>Reseñas del Plan</h2>
-<ul>
-  {% for r in resenas %}
-    <li><strong>{{ r.calificacion }}⭐</strong> - {{ r.comentario }}</li>
-  {% endfor %}
-</ul>
+<div class="formulario-contenedor">
+  <h2>Reseñas del Plan</h2>
 
-<h3>Escribir una Reseña</h3>
-<form method="POST">
-    <label>Calificación:</label>
-    <input type="number" name="calificacion" min="1" max="5" required>
-    <label>Comentario:</label>
-    <textarea name="comentario"></textarea>
-    <button type="submit">Enviar</button>
-</form>
+  <ul class="lista-resenas">
+    {% for r in resenas %}
+      <li><strong>{{ r.calificacion }}⭐</strong> - {{ r.comentario }}</li>
+    {% endfor %}
+  </ul>
+
+  <h3>Escribir una Reseña</h3>
+  <form method="POST" class="formulario-estilizado">
+      <label>Calificación:</label>
+      <div class="estrellas">
+        {% for i in range(5, 0, -1) %}
+          <input type="radio" id="estrella{{ i }}" name="calificacion" value="{{ i }}" required>
+          <label for="estrella{{ i }}">&#9733;</label>
+        {% endfor %}
+      </div>
+
+      <label for="comentario">Comentario:</label>
+      <textarea name="comentario" id="comentario" placeholder="Escribe tu experiencia..."></textarea>
+
+      <button type="submit" class="btn-detalles">Enviar</button>
+  </form>
+</div>
 {% endblock %}

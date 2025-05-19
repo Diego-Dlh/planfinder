@@ -1,15 +1,20 @@
+<!-- registro.html -->
 {% extends "base.html" %}
 {% block title %}Registro{% endblock %}
 {% block content %}
-<h2>Registro de Usuario</h2>
-<form method="POST">
-    <label>Nombre:</label>
-    <input type="text" name="nombre" required>
-    <label>Email:</label>
-    <input type="email" name="email" required>
-    <label>Contraseña:</label>
-    <input type="password" name="contrasena" required>
-    <button type="submit">Registrarse</button>
-</form>
-<a href="{{ url_for('auth.login') }}">¿Ya tienes cuenta?</a>
+<div class="formulario-contenedor">
+  <h2>Registro de Usuario</h2>
+  <form method="POST" class="formulario-estilizado">
+      <label for="nombre">Nombre:</label>
+      <input type="text" name="nombre" id="nombre" required>
+      <label for="email">Email:</label>
+      <input type="email" name="email" id="email" required>
+      <label for="contrasena">Contraseña:</label>
+      <input type="password" name="contrasena" id="contrasena" required>
+      <button type="submit">Registrarse</button>
+  </form>
+  <p style="text-align:center; margin-top: 1rem;">
+    <a href="{{ url_for('auth.login') }}" class="enlace-simple">¿Ya tienes cuenta?</a>
+  </p>
+</div>
 {% endblock %}

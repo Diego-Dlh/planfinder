@@ -1,13 +1,18 @@
+<!-- login.html -->
 {% extends "base.html" %}
 {% block title %}Iniciar Sesión{% endblock %}
 {% block content %}
-<h2>Iniciar Sesión</h2>
-<form method="POST">
-    <label>Email:</label>
-    <input type="email" name="email" required>
-    <label>Contraseña:</label>
-    <input type="password" name="contrasena" required>
-    <button type="submit">Ingresar</button>
-</form>
-<a href="{{ url_for('usuarios.registro') }}">¿No tienes cuenta? Regístrate</a>
+<div class="formulario-contenedor">
+  <h2>Iniciar Sesión</h2>
+  <form method="POST" class="formulario-estilizado">
+      <label for="email">Email:</label>
+      <input type="email" name="email" id="email" required>
+      <label for="contrasena">Contraseña:</label>
+      <input type="password" name="contrasena" id="contrasena" required>
+      <button type="submit">Ingresar</button>
+  </form>
+  <p style="text-align:center; margin-top: 1rem;">
+    <a href="{{ url_for('usuarios.registro') }}" class="enlace-simple">¿No tienes cuenta? Regístrate</a>
+  </p>
+</div>
 {% endblock %}
