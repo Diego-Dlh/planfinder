@@ -1,27 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Planes Disponibles{% endblock %}
+{% block title %}Planes | PlanFinder{% endblock %}
 {% block content %}
-<section class="planes-encontrados">
-  <h2>Planes Turísticos</h2>
-  <div class="grid-planes">
-    {% for plan in planes %}
-      <div class="tarjeta-plan">
-        <div class="info-plan">
-          <h4>{{ plan.nombre }}</h4>
-          <p>{{ plan.descripcion[:120] }}...</p>
-          <div class="acciones">
-            <a href="{{ url_for('planes.detalle', plan_id=plan.id) }}" class="btn-detalles">Ver Detalles</a>
-            <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn-secundario">Reseñas</a>
-            <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn-secundario">Favorito</a>
-          </div>
-        </div>
-      </div>
-    {% else %}
-      <p>No hay planes turísticos disponibles en este momento.</p>
-    {% endfor %}
-  </div>
-  <div style="margin-top: 2rem; text-align: center;">
-    <a href="{{ url_for('planes.nuevo') }}" class="btn-detalles">Crear nuevo plan</a>
-  </div>
-</section>
+<h1>Planes disponibles</h1>
+<div id="planes-container">
+  <!-- Aquí se insertarán las tarjetas dinámicamente -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/planes.js') }}"></script>
 {% endblock %}

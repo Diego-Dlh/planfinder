@@ -44,3 +44,24 @@ def home():
         categorias=categorias,
         ubicaciones=ubicaciones
     )
+    
+from flask import jsonify
+from app.models.plan import PlanTuristico
+
+@bp.route('/api/planes')
+def api_planes():
+    planes = PlanTuristico.query.all()
+    data = []
+    for p in planes:
+        data.append({
+            'id': p.id,
+            'nombre': p.nombre,
+            'descripcion': p.descripcion,
+            'precio': p.precio,
+            'duracion': p.duracion,
+            'categoria': p.categoria.nombre if p.categoria else "Sin categoría",
+            'ubicacion': p.ubicacion.nombre if p.ubicacion else "Sin ubicación"
+        })
+    return jsonify(data)
+
+

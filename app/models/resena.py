@@ -11,3 +11,13 @@ class Resena(db.Model):
 
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     plan_id = db.Column(db.Integer, db.ForeignKey('planes_turisticos.id'), nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'calificacion': self.calificacion,
+            'comentario': self.comentario,
+            'fecha': self.fecha.isoformat(),
+            'usuario_id': self.usuario_id,
+            'plan_id': self.plan_id
+        }

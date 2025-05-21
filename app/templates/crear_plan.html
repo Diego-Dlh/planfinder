@@ -1,28 +1,40 @@
-{% extends "base.html" %}
-{% block title %}Nuevo Plan{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Crear Nuevo Plan{% endblock %}
 {% block content %}
-<section class="formulario-contenedor">
-  <h2>Crear Nuevo Plan</h2>
-  <form method="POST" class="formulario-estilizado">
-      <label>Nombre:</label>
-      <input type="text" name="nombre" required>
-
-      <label>Descripción:</label>
-      <textarea name="descripcion" required></textarea>
-
-      <label>Precio:</label>
-      <input type="number" name="precio" step="0.01" required>
-
-      <label>Duración (horas):</label>
-      <input type="number" name="duracion" step="0.5" required>
-
-      <label>Categoría ID:</label>
-      <input type="number" name="categoria_id" required>
-
-      <label>Ubicación ID:</label>
-      <input type="number" name="ubicacion_id" required>
-
-      <button type="submit" class="btn-filtrar">Crear</button>
-  </form>
-</section>
+<h1 class="text-3xl font-bold mb-6">Crear Nuevo Plan</h1>
+<form method="POST" class="bg-white p-8 rounded-2xl shadow-md max-w-2xl mx-auto space-y-6">
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+        <input type="text" name="nombre" class="w-full border border-gray-300 p-2 rounded-md" required>
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+        <textarea name="descripcion" class="w-full border border-gray-300 p-2 rounded-md" required></textarea>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Precio</label>
+            <input type="number" name="precio" step="0.01" class="w-full border border-gray-300 p-2 rounded-md" required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Duración (horas)</label>
+            <input type="number" name="duracion" step="0.1" class="w-full border border-gray-300 p-2 rounded-md" required>
+        </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Categoría ID</label>
+            <input type="number" name="categoria_id" class="w-full border border-gray-300 p-2 rounded-md" required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Ubicación ID</label>
+            <input type="number" name="ubicacion_id" class="w-full border border-gray-300 p-2 rounded-md" required>
+        </div>
+    </div>
+    <div class="text-center">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md">
+            Crear Plan
+        </button>
+    </div>
+</form>
 {% endblock %}

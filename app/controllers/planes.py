@@ -55,3 +55,11 @@ def agregar_imagen(plan_id):
         flash('Imagen agregada correctamente.')
         return redirect(url_for('planes.detalle', plan_id=plan_id))
     return render_template('agregar_imagen.html', plan_id=plan_id)
+
+from flask import jsonify
+from app.models.plan import PlanTuristico
+
+@bp.route('/api/planes')
+def api_planes():
+    planes = PlanTuristico.query.all()
+    return jsonify([plan.to_dict() for plan in planes])
