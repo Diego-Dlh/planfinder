@@ -2,35 +2,212 @@
 {% block title %}Mi Perfil{% endblock %}
 
 {% block content %}
-<h2>Mi Perfil</h2>
+<section class="perfil-container">
+  <h2>Mi Perfil</h2>
 
-<form method="POST" class="formulario-estilizado">
-    <label>Nombre:</label>
-    <input type="text" name="nombre" value="{{ usuario.nombre }}" required>
+  <form method="POST" class="formulario-estilizado" novalidate>
+    <div class="grid-formulario">
+      <div class="campo-formulario">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" value="{{ usuario.nombre }}" required placeholder="Tu nombre completo" autocomplete="name" />
+      </div>
 
-    <label>Email:</label>
-    <input type="email" value="{{ usuario.email }}" disabled>
+      <div class="campo-formulario">
+        <label for="email">Email:</label>
+        <input type="email" id="email" value="{{ usuario.email }}" disabled aria-disabled="true" />
+      </div>
 
-    <label>Tipo de usuario:</label>
-    <input type="text" value="{{ usuario.tipo.value }}" disabled>
+      <div class="campo-formulario">
+        <label for="tipo_usuario">Tipo de usuario:</label>
+        <input type="text" id="tipo_usuario" value="{{ usuario.tipo.value }}" disabled aria-disabled="true" />
+      </div>
 
-    <label>Nueva contraseña (opcional):</label>
-    <input type="password" name="contrasena">
+      <div class="campo-formulario">
+        <label for="contrasena">Nueva contraseña (opcional):</label>
+        <input type="password" id="contrasena" name="contrasena" placeholder="Nueva contraseña" autocomplete="new-password" minlength="6" />
+        <small class="ayuda">Debe tener al menos 6 caracteres.</small>
+      </div>
 
-    <label>Foto de perfil (URL):</label>
-    <input type="url" name="foto_perfil" value="{{ usuario.foto_perfil or '' }}">
+      <div class="campo-formulario">
+        <label for="foto_perfil">Foto de perfil (URL):</label>
+        <input type="url" id="foto_perfil" name="foto_perfil" value="{{ usuario.foto_perfil or '' }}" placeholder="https://example.com/tu-foto.jpg" />
+      </div>
 
-    {% if usuario.foto_perfil %}
+      {% if usuario.foto_perfil %}
+      <div class="vista-previa">
         <p>Vista previa:</p>
-        <img src="{{ usuario.foto_perfil }}" alt="foto perfil" width="150">
-    {% endif %}
+        <img src="{{ usuario.foto_perfil }}" alt="Foto de perfil de {{ usuario.nombre }}" width="150" loading="lazy" />
+      </div>
+      {% endif %}
+    </div>
 
-    <button type="submit" class="btn-filtrar">Guardar cambios</button>
-</form>
+    <button type="submit" class="btn btn-guardar">Guardar cambios</button>
+  </form>
 
-<!-- Botón Cerrar Sesión -->
-<form action="{{ url_for('auth.logout') }}" method="get" style="margin-top: 1.5rem;">
-    <button type="submit" class="btn-cerrar-sesion">Cerrar sesión</button>
-</form>
+  <!-- Botón Cerrar Sesión -->
+  <form action="{{ url_for('auth.logout') }}" method="get" class="form-cerrar-sesion">
+    <button type="submit" class="btn btn-cerrar-sesion">Cerrar sesión</button>
+  </form>
+</section>
 
+<style>
+.perfil-container {
+  max-width: 800px;
+  margin: 2rem auto 4rem;
+  padding: 2rem 2.5rem;
+  background-color: #f8f9fb;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+.formulario-estilizado {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.grid-formulario {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem 2rem;
+  align-items: start;
+}
+
+.campo-formulario {
+  display: flex;
+  flex-direction: column;
+}
+
+.campo-formulario label {
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #34495e;
+}
+
+.campo-formulario input[type="text"],
+.campo-formulario input[type="email"],
+.campo-formulario input[type="password"],
+.campo-formulario input[type="url"] {
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1.5px solid #ced4da;
+  transition: border-color 0.3s ease;
+  background-color: #fff;
+}
+
+.campo-formulario input:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+  color: #6c757d;
+}
+
+.campo-formulario input:focus:not(:disabled) {
+  outline: none;
+  border-color: #3a80e9;
+  box-shadow: 0 0 5px rgba(58, 128, 233, 0.4);
+}
+
+.ayuda {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 0.2rem;
+}
+
+.vista-previa {
+  grid-column: 3; /* ocupa la tercera columna */
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.vista-previa p {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.vista-previa img {
+  border-radius: 50%;
+  border: 3px solid #2980b9;
+  max-width: 150px;
+  height: auto;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.btn {
+  cursor: pointer;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  user-select: none;
+  transition: background-color 0.3s ease;
+  color: white;
+}
+
+.btn-guardar {
+  background-color: #2980b9;
+  align-self: center;
+  width: 180px;
+}
+
+.btn-guardar:hover,
+.btn-guardar:focus {
+  background-color: #1f6391;
+  outline: none;
+}
+
+.form-cerrar-sesion {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.btn-cerrar-sesion {
+  background-color: #e74c3c;
+  padding: 0.7rem 2rem;
+  font-size: 1.1rem;
+  width: 180px;
+  cursor: pointer;
+}
+
+.btn-cerrar-sesion:hover,
+.btn-cerrar-sesion:focus {
+  background-color: #c0392b;
+  outline: none;
+}
+
+/* Responsive */
+
+@media (max-width: 960px) {
+  .grid-formulario {
+    grid-template-columns: 1fr 1fr; /* dos columnas en tablets */
+  }
+  .vista-previa {
+    grid-column: 1 / -1; /* ocupa todo ancho */
+    margin-top: 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .grid-formulario {
+    grid-template-columns: 1fr; /* columna única en móvil */
+  }
+  .btn-guardar,
+  .btn-cerrar-sesion {
+    width: 100%;
+  }
+}
+</style>
 {% endblock %}

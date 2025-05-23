@@ -1,17 +1,155 @@
 {% extends "base.html" %}
 {% block title %}Mis Favoritos{% endblock %}
+
 {% block content %}
-<h2>Planes Favoritos</h2>
-<ul>
-  {% for f in favoritos %}
-    <li>
-      {{ f.plan.nombre }}
-      <a href="{{ url_for('favoritos.eliminar', plan_id=f.plan_id) }}" class="btn-secundario" style="margin-left: 1rem;">
-        Eliminar
-      </a>
+<section class="favoritos-container">
+  <h2>Planes Favoritos</h2>
+
+  {% if favoritos %}
+  <ul class="lista-favoritos">
+    {% for f in favoritos %}
+    <li class="favorito-item" tabindex="0">
+      <span class="nombre-plan">{{ f.plan.nombre }}</span>
+      <div class="acciones-favorito">
+        <a href="{{ url_for('planes.detalle', plan_id=f.plan_id) }}" class="btn btn-detalles" aria-label="Ver detalles de {{ f.plan.nombre }}">Detalles</a>
+        <a href="{{ url_for('favoritos.eliminar', plan_id=f.plan_id) }}" class="btn btn-eliminar" aria-label="Eliminar {{ f.plan.nombre }} de favoritos">Eliminar</a>
+      </div>
     </li>
+    {% endfor %}
+  </ul>
   {% else %}
-    <p>No tienes planes en favoritos todavía.</p>
-  {% endfor %}
-</ul>
+  <p class="mensaje-vacio">No tienes planes en favoritos todavía.</p>
+  {% endif %}
+</section>
+
+<style>
+.favoritos-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem 2.5rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+  color: #2c3e50;
+  font-size: 2.25rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.lista-favoritos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.favorito-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  background-color: #fff;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.06);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.favorito-item:hover,
+.favorito-item:focus {
+  box-shadow: 0 6px 15px rgb(0 0 0 / 0.15);
+  transform: translateY(-3px);
+  outline: none;
+  cursor: default;
+}
+
+.nombre-plan {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #34495e;
+  flex-grow: 1;
+  user-select: text;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 1;      /* Máximo 2 líneas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50%;             /* Espacio para botones */
+  min-width: 0;
+}
+
+.acciones-favorito {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.btn {
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  text-decoration: none;
+  color: white;
+  transition: background-color 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.btn-detalles {
+  background-color: #2980b9;
+}
+
+.btn-detalles:hover,
+.btn-detalles:focus {
+  background-color: #1f6391;
+  outline: none;
+}
+
+.btn-eliminar {
+  background-color: #e74c3c;
+}
+
+.btn-eliminar:hover,
+.btn-eliminar:focus {
+  background-color: #c0392b;
+  outline: none;
+}
+
+.mensaje-vacio {
+  text-align: center;
+  color: #777;
+  font-size: 1.3rem;
+  margin-top: 4rem;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .favorito-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .acciones-favorito {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .btn {
+    width: auto;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+  }
+}
+</style>
 {% endblock %}
