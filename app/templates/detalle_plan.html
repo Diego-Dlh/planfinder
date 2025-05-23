@@ -50,7 +50,15 @@
       <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn btn-secundario">Agregar a favoritos</a>
       <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn btn-secundario">Escribir reseña</a>
     {% endif %}
-    <a href="{{ url_for('planes.agregar_imagen', plan_id=plan.id) }}" class="btn btn-secundario">Agregar imagen</a>
+
+    {% if session.get('rol') == 'Admin' %}
+      <!-- Solo los administradores pueden agregar imágenes -->
+      <a href="{{ url_for('planes.agregar_imagen', plan_id=plan.id) }}" class="btn btn-secundario">Agregar imagen</a>
+      <a href="{{ url_for('planes.editar', plan_id=plan.id) }}" class="btn btn-secundario">Editar Plan</a>
+    {% else %}
+      <p>Acción no permitida. Solo los administradores pueden modificar el plan.</p>
+    {% endif %}
+
     <a href="https://twitter.com/intent/tweet?text={{ plan.nombre }} {{ request.url }}" target="_blank" rel="noopener" class="btn btn-redes btn-twitter" aria-label="Compartir en Twitter">Twitter</a>
     <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank" rel="noopener" class="btn btn-redes btn-facebook" aria-label="Compartir en Facebook">Facebook</a>
   </section>

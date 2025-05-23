@@ -1,10 +1,94 @@
 {% extends "base.html" %}
 {% block title %}Categorías{% endblock %}
 {% block content %}
-<h2>Categorías Disponibles</h2>
-<ul>
-  {% for c in categorias %}
-    <li>{{ c.nombre }} - {{ c.descripcion }}</li>
-  {% endfor %}
-</ul>
+<section class="categorias-container">
+  <h2>Categorías Disponibles</h2>
+  
+  {% if categorias %}
+    <div class="grid-categorias">
+      {% for c in categorias %}
+      <div class="categoria-card">
+        <h3 class="categoria-nombre">{{ c.nombre }}</h3>
+        <p class="categoria-descripcion">{{ c.descripcion }}</p>
+        <a href="{{ url_for('planes.listar', categoria_id=c.id) }}" class="btn btn-detalles">Ver Planes</a>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No hay categorías disponibles en este momento.</p>
+  {% endif %}
+</section>
+
+<style>
+.categorias-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #34495e;
+}
+
+.grid-categorias {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.categoria-card {
+  background-color: #f7f9fc;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.categoria-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.categoria-nombre {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.categoria-descripcion {
+  color: #7f8c8d;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.btn-detalles {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background-color: #2980b9;
+  color: white;
+  font-weight: 600;
+  border-radius: 6px;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.btn-detalles:hover {
+  background-color: #1f6391;
+}
+
+@media (max-width: 600px) {
+  .grid-categorias {
+    grid-template-columns: 1fr; /* Una sola columna en dispositivos móviles */
+  }
+}
+</style>
 {% endblock %}

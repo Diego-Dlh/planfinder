@@ -3,15 +3,23 @@
 {% block content %}
 <section class="formulario-contenedor">
   <h2>Agregar Imagen al Plan</h2>
-  <form method="POST" class="formulario-estilizado">
+
+  {% if session.get('rol') != 'Admin' %}
+    <div class="alerta-acceso-denegado">
+      <p>Acceso denegado. Solo los administradores pueden agregar imágenes.</p>
+      <a href="{{ url_for('main.home') }}" class="btn-secundario">Volver a la página principal</a>
+    </div>
+  {% else %}
+    <form method="POST" class="formulario-estilizado">
       <label for="url">URL de la imagen:</label>
       <input type="url" name="url" required>
 
       <button type="submit" class="btn-filtrar">Guardar</button>
-  </form>
+    </form>
 
-  <div style="margin-top: 1rem;">
-    <a href="{{ url_for('planes.detalle', plan_id=plan_id) }}" class="btn-secundario">← Volver al detalle</a>
-  </div>
+    <div style="margin-top: 1rem;">
+      <a href="{{ url_for('planes.detalle', plan_id=plan_id) }}" class="btn-secundario">← Volver al detalle</a>
+    </div>
+  {% endif %}
 </section>
 {% endblock %}

@@ -1,28 +1,64 @@
 {% extends "base.html" %}
 {% block title %}Nuevo Plan{% endblock %}
+
 {% block content %}
 <section class="formulario-contenedor">
   <h2>Crear Nuevo Plan</h2>
-  <form method="POST" class="formulario-estilizado">
-      <label>Nombre:</label>
-      <input type="text" name="nombre" required>
 
-      <label>Descripción:</label>
-      <textarea name="descripcion" required></textarea>
+  {% if session.get('rol') != 'Admin' %}
+    <div class="alerta-acceso-denegado">
+      <p>Acceso denegado. Solo los administradores pueden crear planes.</p>
+      <a href="{{ url_for('main.home') }}" class="btn-secundario">Volver a la página principal</a>
+    </div>
+  {% else %}
+    <form method="POST" class="formulario-estilizado">
+        <label for="nombre">Nombre:</label>
+        <input type="text" name="nombre" required>
 
-      <label>Precio:</label>
-      <input type="number" name="precio" step="0.01" required>
+        <label for="descripcion">Descripción:</label>
+        <textarea name="descripcion" required></textarea>
 
-      <label>Duración (horas):</label>
-      <input type="number" name="duracion" step="0.5" required>
+        <label for="precio">Precio:</label>
+        <input type="number" name="precio" step="0.01" required>
 
-      <label>Categoría ID:</label>
-      <input type="number" name="categoria_id" required>
+        <label for="duracion">Duración (horas):</label>
+        <input type="number" name="duracion" step="0.5" required>
 
-      <label>Ubicación ID:</label>
-      <input type="number" name="ubicacion_id" required>
+        <label for="categoria_id">Categoría ID:</label>
+        <input type="number" name="categoria_id" required>
 
-      <button type="submit" class="btn-filtrar">Crear</button>
-  </form>
+        <label for="ubicacion_id">Ubicación ID:</label>
+        <input type="number" name="ubicacion_id" required>
+
+        <button type="submit" class="btn-filtrar">Crear</button>
+    </form>
+  {% endif %}
 </section>
 {% endblock %}
+
+<style>
+/* Estilos para la alerta de acceso denegado */
+.alerta-acceso-denegado {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.alerta-acceso-denegado a {
+  display: inline-block;
+  margin-top: 1rem;
+  background-color: #c82333;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.alerta-acceso-denegado a:hover {
+  background-color: #a71d2a;
+}
+</style>
