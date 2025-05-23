@@ -1,0 +1,203 @@
+controles
+
+#admin.py
+from flask import Blueprint, redirect, url_for, flash
+from app.services.admin import eliminar_resena
+
+bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+@bp.route('/eliminar-resena/<int:resena_id>')
+def eliminar_resena_route(resena_id):
+    resultado = eliminar_resena(resena_id)
+    if resultado['ok']:
+        flash('Reseña eliminada con éxito')
+    else:
+        flash(resultado['error'])
+    return redirect(url_for('planes.listar'))
+
+#auth.py
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from app.services.auth import autenticar_usuario
+
+bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+@bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        contrasena = request.form['contrasena']
+        resultado = autenticar_usuario(email, contrasena)
+        if resultado['ok']:
+            session['usuario_id'] = resultado['usuario'].id
+            flash('Sesión iniciada correctamente')
+            return redirect(url_for('planes.listar'))
+        flash(resultado['error'])
+    return render_template('login.html')
+
+@bp.route('/logout')
+def logout():
+    session.clear()
+    flash('Sesión cerrada')
+    return redirect(url_for('auth.login'))
+
+
+categorías.py
+from flask import Blueprint, render_template
+from app.services.categorias import listar_categorias
+
+bp = Blueprint('categorias', __name__, url_prefix='/categorias')
+
+@bp.route('/')
+def index():
+    categorias = listar_categorias()
+    return render_template('categorias.html', categorias=categorias)
+
+
+favoritos.py
+from flask import Blueprint, redirect, url_for, session, render_template
+from app.services.favoritos import guardar_favorito, listar_favoritos
+
+bp = Blueprint('favoritos', __name__, url_prefix='/favoritos')
+
+@bp.route('/agregar/<int:plan_id>')
+def agregar(plan_id):
+    usuario_id = session.get('usuario_id')
+    guardar_favorito(usuario_id, plan_id)
+    return redirect(url_for('favoritos.listar'))
+
+@bp.route('/')
+def listar():
+    usuario_id = session.get('usuario_id')
+    favoritos = listar_favoritos(usuario_id)
+    return render_template('favoritos.html', favoritos=favoritos)
+
+
+planes.py
+from flask import Blueprint, render_template, request, redirect, url_for, session
+from app.services.planes import listar_planes, crear_plan
+
+bp = Blueprint('planes', __name__, url_prefix='/planes')
+
+@bp.route('/')
+def listar():
+    planes = listar_planes()
+    return render_template('planes_listar.html', planes=planes)
+
+@bp.route('/nuevo', methods=['GET', 'POST'])
+def nuevo():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        descripcion = request.form['descripcion']
+        precio = float(request.form['precio'])
+        duracion = float(request.form['duracion'])
+        categoria_id = request.form['categoria_id']
+        ubicacion_id = request.form['ubicacion_id']
+        usuario_id = session.get('usuario_id')
+        plan = crear_plan(nombre, descripcion, precio, duracion, usuario_id, categoria_id, ubicacion_id)
+        return redirect(url_for('planes.listar'))
+    return render_template('crear_plan.html')
+
+from app.services.planes import obtener_plan_por_id
+from app.services.resenas import obtener_resenas_por_plan
+from app.models.imagen_plan import ImagenPlan
+from app.models.ubicacion import Ubicacion
+
+@bp.route('/<int:plan_id>')
+def detalle(plan_id):
+    plan = obtener_plan_por_id(plan_id)
+    resenas = obtener_resenas_por_plan(plan_id)
+    imagenes = plan.imagenes
+    ubicacion = plan.ubicacion
+    usuario_id = session.get('usuario_id')
+    return render_template('detalle_plan.html',
+                           plan=plan,
+                           resenas=resenas,
+                           imagenes=imagenes,
+                           ubicacion=ubicacion,
+                           usuario_id=usuario_id)
+
+from flask import request, flash
+from app import db
+from app.models.imagen_plan import ImagenPlan
+
+@bp.route('/<int:plan_id>/agregar-imagen', methods=['GET', 'POST'])
+def agregar_imagen(plan_id):
+    if request.method == 'POST':
+        url = request.form['url']
+        imagen = ImagenPlan(url=url, plan_id=plan_id)
+        db.session.add(imagen)
+        db.session.commit()
+        flash('Imagen agregada correctamente.')
+        return redirect(url_for('planes.detalle', plan_id=plan_id))
+    return render_template('agregar_imagen.html', plan_id=plan_id)
+
+
+reenas.pyfrom flask import Blueprint, render_template, request, redirect, url_for, session
+from app.services.resenas import escribir_resena, obtener_resenas_por_plan
+
+bp = Blueprint('resenas', __name__, url_prefix='/resenas')
+
+@bp.route('/<int:plan_id>', methods=['GET', 'POST'])
+def reseñar(plan_id):
+    if request.method == 'POST':
+        calificacion = float(request.form['calificacion'])
+        comentario = request.form['comentario']
+        usuario_id = session.get('usuario_id')
+        escribir_resena(usuario_id, plan_id, calificacion, comentario)
+        return redirect(url_for('resenas.reseñar', plan_id=plan_id))
+    resenas = obtener_resenas_por_plan(plan_id)
+    return render_template('resenas.html', resenas=resenas, plan_id=plan_id)
+
+
+usuarios.py
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from app.services.usuarios import registrar_usuario, listar_usuarios
+
+bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
+
+@bp.route('/registro', methods=['GET', 'POST'])
+def registro():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        correo = request.form['email']
+        contrasena = request.form['contrasena']
+        resultado = registrar_usuario(nombre, correo, contrasena)
+        if resultado['ok']:
+            flash('Usuario registrado con éxito')
+            return redirect(url_for('auth.login'))
+        flash(resultado['error'])
+    return render_template('registro.html')
+
+@bp.route('/listar')
+def listar():
+    usuarios = listar_usuarios()
+    return render_template('usuarios_listar.html', usuarios=usuarios)
+
+from flask import session, render_template, request, redirect, url_for, flash
+from app.models.usuario import Usuario
+from app import db
+
+@bp.route('/perfil', methods=['GET', 'POST'])
+def perfil():
+    usuario_id = session.get('usuario_id')
+    if not usuario_id:
+        flash('Debes iniciar sesión.')
+        return redirect(url_for('auth.login'))
+
+    usuario = Usuario.query.get(usuario_id)
+
+    if request.method == 'POST':
+        usuario.nombre = request.form['nombre']
+        nueva_contrasena = request.form['contrasena']
+        foto = request.form['foto_perfil']
+
+        if nueva_contrasena:
+            usuario.contrasena = nueva_contrasena
+        if foto:
+            usuario.foto_perfil = foto
+
+        db.session.commit()
+        flash('Perfil actualizado correctamente.')
+        return redirect(url_for('usuarios.perfil'))
+
+    return render_template('perfil.html', usuario=usuario)

@@ -1,0 +1,155 @@
+models
+
+administrador.py
+from app import db
+from sqlalchemy import Enum
+import enum
+
+class RolAdministrador(enum.Enum):
+    SUPERADM = "superAdm"
+    MODERA = "Modera"
+    GESTOR = "Gestor"
+
+class Administrador(db.Model):
+    __tablename__ = 'administradores'
+
+    id = db.Column(db.Integer, primary_key=True)
+    rol = db.Column(db.Enum(RolAdministrador), nullable=False)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), unique=True)
+
+alternativa_transporte.py
+from app import db
+
+class AlternativaDeTransporte(db.Model):
+    __tablename__ = 'alternativas_transporte'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    horario = db.Column(db.Time)
+    descripcion = db.Column(db.Text)
+
+    plan_id = db.Column(db.Integer, db.ForeignKey('planes_turisticos.id'), nullable=False)
+
+categoría.py
+from app import db
+
+class Categoria(db.Model):
+    __tablename__ = 'categorias'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(50), nullable=False)
+    descripcion = db.Column(db.String(255))
+
+    planes = db.relationship('PlanTuristico', backref='categoria', lazy=True)
+
+favorito.py
+from app import db
+from datetime import date
+
+class Favorito(db.Model):
+    __tablename__ = 'favoritos'
+
+    id = db.Column(db.Integer, primary_key=True)
+    fecha_guardado = db.Column(db.Date, default=date.today)
+
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    plan_id = db.Column(db.Integer, db.ForeignKey('planes_turisticos.id'), nullable=False)
+
+imagen_plan.py
+from app import db
+
+class ImagenPlan(db.Model):
+    __tablename__ = 'imagenes_plan'
+
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(255), nullable=False)
+    plan_id = db.Column(db.Integer, db.ForeignKey('planes_turisticos.id'), nullable=False)
+
+plan.py
+from app import db
+
+class PlanTuristico(db.Model):
+    __tablename__ = 'planes_turisticos'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    descripcion = db.Column(db.Text, nullable=False)
+    precio = db.Column(db.Float, nullable=False)
+    duracion = db.Column(db.Float)
+    promedio_calificacion = db.Column(db.Float)
+
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    categoria_id = db.Column(db.Integer, db.ForeignKey('categorias.id'))
+    ubicacion_id = db.Column(db.Integer, db.ForeignKey('ubicaciones.id'))
+
+    imagenes = db.relationship('ImagenPlan', backref='plan', lazy=True)
+    resenas = db.relationship('Resena', backref='plan', lazy=True)
+    transportes = db.relationship('AlternativaDeTransporte', backref='plan', lazy=True)
+
+resena.py
+from app import db
+from datetime import date
+
+class Resena(db.Model):
+    __tablename__ = 'resenas'
+
+    id = db.Column(db.Integer, primary_key=True)
+    calificacion = db.Column(db.Float, nullable=False)
+    comentario = db.Column(db.Text)
+    fecha = db.Column(db.Date, default=date.today)
+
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    plan_id = db.Column(db.Integer, db.ForeignKey('planes_turisticos.id'), nullable=False)
+
+sesión.py
+from app import db
+
+class Sesion(db.Model):
+    __tablename__ = 'sesiones'
+
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(255), nullable=False)
+    fecha_inicio = db.Column(db.DateTime)
+    fecha_expiracion = db.Column(db.DateTime)
+
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False, unique=True)
+
+ubicación.py
+from app import db
+
+class Ubicacion(db.Model):
+    __tablename__ = 'ubicaciones'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    direccion = db.Column(db.String(255), nullable=False)
+    coordenadas = db.Column(db.String(100))  # Ejemplo: "11.2435,-74.2023"
+    tipo = db.Column(db.String(50))  # Playa, Museo, etc.
+
+    planes = db.relationship('PlanTuristico', backref='ubicacion', lazy=True)
+
+usuario.py
+from app import db
+from sqlalchemy.orm import relationship
+from sqlalchemy import Enum
+import enum
+
+class TipoUsuario(enum.Enum):
+    TURISTA = "Turista"
+    RESIDENTE = "Residente"
+    ADMIN = "Admin"
+
+class Usuario(db.Model):
+    __tablename__ = 'usuarios'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    contrasena = db.Column(db.String(100), nullable=False)
+    tipo = db.Column(db.Enum(TipoUsuario), nullable=False)
+    foto_perfil = db.Column(db.String(255))
+
+    planes = relationship('PlanTuristico', backref='creador', lazy=True)
+    resenas = relationship('Resena', backref='autor', lazy=True)
+    favoritos = relationship('Favorito', backref='usuario', lazy=True)
+    sesion = relationship('Sesion', uselist=False, backref='usuario')

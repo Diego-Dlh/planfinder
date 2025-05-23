@@ -1,54 +1,77 @@
 {% extends "base.html" %}
 {% block title %}{{ plan.nombre }}{% endblock %}
+
 {% block content %}
-<div class="detalle-plan">
-  <h2>{{ plan.nombre }}</h2>
-  <p><strong>Descripción:</strong> {{ plan.descripcion }}</p>
-  <p><strong>Precio:</strong> ${{ plan.precio }}</p>
-  <p><strong>Duración:</strong> {{ plan.duracion }} horas</p>
+<div class="detalle-plan-container">
+  <h2 class="titulo-plan">{{ plan.nombre }}</h2>
+
+  <section class="info-general">
+    <p><strong>Descripción:</strong> {{ plan.descripcion }}</p>
+    <p><strong>Precio:</strong> ${{ plan.precio }}</p>
+    <p><strong>Duración:</strong> {{ plan.duracion }} horas</p>
+    <p><strong>Calificación promedio:</strong>
+      {{ plan.promedio_calificacion if plan.promedio_calificacion else 'Sin calificar' }} ⭐
+    </p>
+  </section>
 
   {% if imagenes %}
+  <section class="galeria">
     <h3>Galería de Imágenes</h3>
     <div class="galeria-imagenes">
       {% for img in imagenes %}
-        <img src="{{ img.url }}" alt="imagen del plan" class="img-mini">
+      <img src="{{ img.url }}" alt="Imagen del plan" class="img-miniatura">
       {% endfor %}
     </div>
+  </section>
   {% endif %}
 
   {% if ubicacion %}
+  <section class="ubicacion">
     <h3>Ubicación</h3>
-    <div id="map" style="height: 300px; margin-bottom: 1rem;"></div>
+    <div id="map" style="height: 300px; border-radius: 10px; margin-bottom: 1rem;"></div>
     <p><strong>{{ ubicacion.nombre }}</strong> - {{ ubicacion.direccion }}</p>
+  </section>
   {% endif %}
 
-  {% if usuario_id %}
-    <p><a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn-secundario">Agregar a favoritos</a></p>
-  {% endif %}
+  <section class="acciones-principales">
+    {% if usuario_id %}
+      <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn btn-secundario">Agregar a favoritos</a>
+      <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn btn-secundario">Escribir reseña</a>
+    {% endif %}
+    <a href="{{ url_for('planes.agregar_imagen', plan_id=plan.id) }}" class="btn btn-secundario">Agregar imagen</a>
+    <a href="https://twitter.com/intent/tweet?text={{ plan.nombre }} {{ request.url }}" target="_blank" class="btn-redes">Compartir en Twitter</a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank" class="btn-redes">Compartir en Facebook</a>
+  </section>
 
-  <h3>Reseñas</h3>
-  <ul class="lista-resenas">
-    {% for r in resenas %}
+  <section class="resenas">
+    <h3>Reseñas</h3>
+    {% if resenas %}
+    <ul class="lista-resenas">
+      {% for r in resenas %}
       <li><strong>{{ r.calificacion }}⭐</strong> - {{ r.comentario }}</li>
-    {% endfor %}
-  </ul>
-
-  <div class="acciones">
-    <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn-detalles">Escribir reseña</a>
-    <a href="{{ url_for('planes.agregar_imagen', plan_id=plan.id) }}" class="btn-secundario">Agregar imagen</a>
-  </div>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>No hay reseñas aún. ¡Sé el primero en opinar!</p>
+    {% endif %}
+  </section>
 </div>
 
 {% if ubicacion %}
-  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
-  <script>
-    const mapa = L.map('map').setView([{{ ubicacion.coordenadas.split(',')[0] }}, {{ ubicacion.coordenadas.split(',')[1] }}], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
-    }).addTo(mapa);
-    L.marker([{{ ubicacion.coordenadas.split(',')[0] }}, {{ ubicacion.coordenadas.split(',')[1] }}]).addTo(mapa)
-      .bindPopup('{{ ubicacion.nombre }}').openPopup();
-  </script>
+<!-- Leaflet Map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+<script>
+  const mapa = L.map('map').setView(
+    [{{ ubicacion.coordenadas.split(',')[0] }}, {{ ubicacion.coordenadas.split(',')[1] }}],
+    13
+  );
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+  }).addTo(mapa);
+  L.marker(
+    [{{ ubicacion.coordenadas.split(',')[0] }}, {{ ubicacion.coordenadas.split(',')[1] }}]
+  ).addTo(mapa).bindPopup('{{ ubicacion.nombre }}').openPopup();
+</script>
 {% endif %}
 {% endblock %}

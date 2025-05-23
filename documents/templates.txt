@@ -1,0 +1,388 @@
+templates
+
+agregar_imagen.html
+{% extends "base.html" %}
+{% block title %}Agregar Imagen{% endblock %}
+{% block content %}
+<section class="formulario-contenedor">
+  <h2>Agregar Imagen al Plan</h2>
+  <form method="POST" class="formulario-estilizado">
+      <label for="url">URL de la imagen:</label>
+      <input type="url" name="url" required>
+
+      <button type="submit" class="btn-filtrar">Guardar</button>
+  </form>
+
+  <div style="margin-top: 1rem;">
+    <a href="{{ url_for('planes.detalle', plan_id=plan_id) }}" class="btn-secundario">← Volver al detalle</a>
+  </div>
+</section>
+{% endblock %}
+
+
+base.html
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Gestión de Planes{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+    <header class="header-principal">
+        <h1>Turismo Planes</h1>
+        <nav class="nav-principal">
+            <a href="{{ url_for('main.home') }}">Inicio</a>
+            <a href="{{ url_for('planes.listar') }}">Planes</a>
+            <a href="{{ url_for('favoritos.listar') }}">Favoritos</a>
+            <a href="{{ url_for('auth.login') }}">Iniciar Sesión</a>
+            <a href="{{ url_for('usuarios.perfil') }}">Mi Perfil</a>
+        </nav>
+    </header>
+    <main>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="mensajes">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="footer">
+        <p>&copy; 2023 Turismo Planes. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
+
+categorias.html
+{% extends "base.html" %}
+{% block title %}Categorías{% endblock %}
+{% block content %}
+<h2>Categorías Disponibles</h2>
+<ul>
+  {% for c in categorias %}
+    <li>{{ c.nombre }} - {{ c.descripcion }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}
+
+
+crear_plan.html
+{% extends "base.html" %}
+{% block title %}Nuevo Plan{% endblock %}
+{% block content %}
+<section class="formulario-contenedor">
+  <h2>Crear Nuevo Plan</h2>
+  <form method="POST" class="formulario-estilizado">
+      <label>Nombre:</label>
+      <input type="text" name="nombre" required>
+
+      <label>Descripción:</label>
+      <textarea name="descripcion" required></textarea>
+
+      <label>Precio:</label>
+      <input type="number" name="precio" step="0.01" required>
+
+      <label>Duración (horas):</label>
+      <input type="number" name="duracion" step="0.5" required>
+
+      <label>Categoría ID:</label>
+      <input type="number" name="categoria_id" required>
+
+      <label>Ubicación ID:</label>
+      <input type="number" name="ubicacion_id" required>
+
+      <button type="submit" class="btn-filtrar">Crear</button>
+  </form>
+</section>
+{% endblock %}
+
+dashboard.html
+
+detalle_plan.html
+{% extends "base.html" %}
+{% block title %}{{ plan.nombre }}{% endblock %}
+{% block content %}
+<div class="detalle-plan">
+  <h2>{{ plan.nombre }}</h2>
+  <p><strong>Descripción:</strong> {{ plan.descripcion }}</p>
+  <p><strong>Precio:</strong> ${{ plan.precio }}</p>
+  <p><strong>Duración:</strong> {{ plan.duracion }} horas</p>
+
+  {% if imagenes %}
+    <h3>Galería de Imágenes</h3>
+    <div class="galeria-imagenes">
+      {% for img in imagenes %}
+        <img src="{{ img.url }}" alt="imagen del plan" class="img-mini">
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if ubicacion %}
+    <h3>Ubicación</h3>
+    <div id="map" style="height: 300px; margin-bottom: 1rem;"></div>
+    <p><strong>{{ ubicacion.nombre }}</strong> - {{ ubicacion.direccion }}</p>
+  {% endif %}
+
+  {% if usuario_id %}
+    <p><a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn-secundario">Agregar a favoritos</a></p>
+  {% endif %}
+
+  <h3>Reseñas</h3>
+  <ul class="lista-resenas">
+    {% for r in resenas %}
+      <li><strong>{{ r.calificacion }}⭐</strong> - {{ r.comentario }}</li>
+    {% endfor %}
+  </ul>
+
+  <div class="acciones">
+    <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn-detalles">Escribir reseña</a>
+    <a href="{{ url_for('planes.agregar_imagen', plan_id=plan.id) }}" class="btn-secundario">Agregar imagen</a>
+  </div>
+</div>
+
+{% if ubicacion %}
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <script>
+    const mapa = L.map('map').setView([{{ ubicacion.coordenadas.split(',')[0] }}, {{ ubicacion.coordenadas.split(',')[1] }}], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+    }).addTo(mapa);
+    L.marker([{{ ubicacion.coordenadas.split(',')[0] }}, {{ ubicacion.coordenadas.split(',')[1] }}]).addTo(mapa)
+      .bindPopup('{{ ubicacion.nombre }}').openPopup();
+  </script>
+{% endif %}
+{% endblock %}
+
+error.html
+
+favoritos.html
+{% extends "base.html" %}
+{% block title %}Mis Favoritos{% endblock %}
+{% block content %}
+<h2>Planes Favoritos</h2>
+<ul>
+  {% for f in favoritos %}
+    <li>{{ f.plan.nombre }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}
+
+home.html
+<!-- home.html -->
+{% extends "base.html" %}
+{% block title %}Inicio{% endblock %}
+{% block content %}
+<section class="bienvenida">
+  <h2>Explora tus próximas aventuras</h2>
+  <p>Descubre y reserva planes turísticos increíbles según tus gustos y presupuesto.</p>
+</section>
+<section class="filtro-container">
+  <h3>Filtrar planes turísticos</h3>
+  <form method="get" class="formulario-filtros">
+    <div class="campo">
+      <label for="categoria_id">Categoría:</label>
+      <select name="categoria_id" id="categoria_id">
+        <option value="">Todas</option>
+        {% for cat in categorias %}
+        <option value="{{ cat.id }}" {% if request.args.get('categoria_id') == cat.id|string %}selected{% endif %}>{{ cat.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="campo">
+      <label for="ubicacion_id">Ubicación:</label>
+      <select name="ubicacion_id" id="ubicacion_id">
+        <option value="">Todas</option>
+        {% for u in ubicaciones %}
+        <option value="{{ u.id }}" {% if request.args.get('ubicacion_id') == u.id|string %}selected{% endif %}>{{ u.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="campo">
+      <label for="precio_min">Precio mínimo:</label>
+      <input type="number" name="precio_min" id="precio_min" step="0.01" value="{{ request.args.get('precio_min', '') }}">
+    </div>
+    <div class="campo">
+      <label for="precio_max">Precio máximo:</label>
+      <input type="number" name="precio_max" id="precio_max" step="0.01" value="{{ request.args.get('precio_max', '') }}">
+    </div>
+    <button type="submit" class="btn-filtrar">Buscar</button>
+  </form>
+</section>
+<section class="planes-encontrados">
+  <h3>Planes disponibles</h3>
+  <div class="grid-planes">
+    {% for plan in planes %}
+    <div class="tarjeta-plan">
+      <img src="{{ plan.imagenes[0].url }}" alt="imagen del plan">
+      <div class="info-plan">
+        <h4>{{ plan.nombre }}</h4>
+        <p class="precio">${{ plan.precio }}</p>
+        <p>{{ plan.descripcion[:100] }}...</p>
+        <div class="acciones">
+          <a href="{{ url_for('planes.detalle', plan_id=plan.id) }}" class="btn-detalles">Ver detalles</a>
+          {% if usuario_id %}
+          <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn-secundario">Favorito</a>
+          <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn-secundario">Reseñas</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <p>No se encontraron planes con los filtros seleccionados.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+login.html
+<!-- login.html -->
+{% extends "base.html" %}
+{% block title %}Iniciar Sesión{% endblock %}
+{% block content %}
+<div class="formulario-contenedor">
+  <h2>Iniciar Sesión</h2>
+  <form method="POST" class="formulario-estilizado">
+      <label for="email">Email:</label>
+      <input type="email" name="email" id="email" required>
+      <label for="contrasena">Contraseña:</label>
+      <input type="password" name="contrasena" id="contrasena" required>
+      <button type="submit">Ingresar</button>
+  </form>
+  <p style="text-align:center; margin-top: 1rem;">
+    <a href="{{ url_for('usuarios.registro') }}" class="enlace-simple">¿No tienes cuenta? Regístrate</a>
+  </p>
+</div>
+{% endblock %}
+
+perfil.html
+{% extends "base.html" %}
+{% block title %}Mi Perfil{% endblock %}
+
+{% block content %}
+<h2>Mi Perfil</h2>
+
+<form method="POST">
+    <label>Nombre:</label>
+    <input type="text" name="nombre" value="{{ usuario.nombre }}" required>
+
+    <label>Email:</label>
+    <input type="email" value="{{ usuario.email }}" disabled>
+
+    <label>Tipo de usuario:</label>
+    <input type="text" value="{{ usuario.tipo.value }}" disabled>
+
+    <label>Nueva contraseña (opcional):</label>
+    <input type="password" name="contrasena">
+
+    <label>Foto de perfil (URL):</label>
+    <input type="url" name="foto_perfil" value="{{ usuario.foto_perfil or '' }}">
+
+    {% if usuario.foto_perfil %}
+        <p>Vista previa:</p>
+        <img src="{{ usuario.foto_perfil }}" alt="foto perfil" width="150">
+    {% endif %}
+
+    <button type="submit">Guardar cambios</button>
+</form>
+{% endblock %}
+
+planes_listar.html
+{% extends "base.html" %}
+{% block title %}Planes Disponibles{% endblock %}
+{% block content %}
+<section class="planes-encontrados">
+  <h2>Planes Turísticos</h2>
+  <div class="grid-planes">
+    {% for plan in planes %}
+      <div class="tarjeta-plan">
+        <div class="info-plan">
+          <h4>{{ plan.nombre }}</h4>
+          <p>{{ plan.descripcion[:120] }}...</p>
+          <div class="acciones">
+            <a href="{{ url_for('planes.detalle', plan_id=plan.id) }}" class="btn-detalles">Ver Detalles</a>
+            <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn-secundario">Reseñas</a>
+            <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn-secundario">Favorito</a>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <p>No hay planes turísticos disponibles en este momento.</p>
+    {% endfor %}
+  </div>
+  <div style="margin-top: 2rem; text-align: center;">
+    <a href="{{ url_for('planes.nuevo') }}" class="btn-detalles">Crear nuevo plan</a>
+  </div>
+</section>
+{% endblock %}
+
+registro.html
+<!-- registro.html -->
+{% extends "base.html" %}
+{% block title %}Registro{% endblock %}
+{% block content %}
+<div class="formulario-contenedor">
+  <h2>Registro de Usuario</h2>
+  <form method="POST" class="formulario-estilizado">
+      <label for="nombre">Nombre:</label>
+      <input type="text" name="nombre" id="nombre" required>
+      <label for="email">Email:</label>
+      <input type="email" name="email" id="email" required>
+      <label for="contrasena">Contraseña:</label>
+      <input type="password" name="contrasena" id="contrasena" required>
+      <button type="submit">Registrarse</button>
+  </form>
+  <p style="text-align:center; margin-top: 1rem;">
+    <a href="{{ url_for('auth.login') }}" class="enlace-simple">¿Ya tienes cuenta?</a>
+  </p>
+</div>
+{% endblock %}
+
+resenas.html
+{% extends "base.html" %}
+{% block title %}Reseñas{% endblock %}
+{% block content %}
+<div class="formulario-contenedor">
+  <h2>Reseñas del Plan</h2>
+
+  <ul class="lista-resenas">
+    {% for r in resenas %}
+      <li><strong>{{ r.calificacion }}⭐</strong> - {{ r.comentario }}</li>
+    {% endfor %}
+  </ul>
+
+  <h3>Escribir una Reseña</h3>
+  <form method="POST" class="formulario-estilizado">
+      <label>Calificación:</label>
+      <div class="estrellas">
+        {% for i in range(5, 0, -1) %}
+          <input type="radio" id="estrella{{ i }}" name="calificacion" value="{{ i }}" required>
+          <label for="estrella{{ i }}">&#9733;</label>
+        {% endfor %}
+      </div>
+
+      <label for="comentario">Comentario:</label>
+      <textarea name="comentario" id="comentario" placeholder="Escribe tu experiencia..."></textarea>
+
+      <button type="submit" class="btn-detalles">Enviar</button>
+  </form>
+</div>
+{% endblock %}
+
+usuarios_listar.html
+{% extends "base.html" %}
+{% block title %}Usuarios Registrados{% endblock %}
+{% block content %}
+<h2>Usuarios</h2>
+<ul>
+  {% for u in usuarios %}
+    <li>{{ u.nombre }} - {{ u.email }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}
+

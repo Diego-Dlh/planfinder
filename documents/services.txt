@@ -1,0 +1,113 @@
+services
+
+admin.py
+from app.models.resena import Resena
+from app import db
+
+def eliminar_resena(resena_id):
+    resena = Resena.query.get(resena_id)
+    if resena:
+        db.session.delete(resena)
+        db.session.commit()
+        return {'ok': True}
+    return {'ok': False, 'error': 'Reseña no encontrada'}
+
+auth.py
+from app.models.usuario import Usuario
+
+def autenticar_usuario(email, contrasena):
+    usuario = Usuario.query.filter_by(email=email).first()
+    if usuario and usuario.contrasena == contrasena:
+        return {'ok': True, 'usuario': usuario}
+    return {'ok': False, 'error': 'Credenciales inválidas'}
+
+categorías.py
+from app.models.categoria import Categoria
+
+def listar_categorias():
+    return Categoria.query.all()
+
+favoritos.py
+from app import db
+from app.models.favorito import Favorito
+
+def guardar_favorito(usuario_id, plan_id):
+    existente = Favorito.query.filter_by(usuario_id=usuario_id, plan_id=plan_id).first()
+    if existente:
+        return {'ok': False, 'error': 'Ya está guardado como favorito'}
+    nuevo = Favorito(usuario_id=usuario_id, plan_id=plan_id)
+    db.session.add(nuevo)
+    db.session.commit()
+    return {'ok': True}
+
+def listar_favoritos(usuario_id):
+    return Favorito.query.filter_by(usuario_id=usuario_id).all()
+
+planes.py
+from app import db
+from app.models.plan import PlanTuristico
+
+def crear_plan(nombre, descripcion, precio, duracion, usuario_id, categoria_id, ubicacion_id):
+    plan = PlanTuristico(
+        nombre=nombre,
+        descripcion=descripcion,
+        precio=precio,
+        duracion=duracion,
+        usuario_id=usuario_id,
+        categoria_id=categoria_id,
+        ubicacion_id=ubicacion_id
+    )
+    db.session.add(plan)
+    db.session.commit()
+    return plan
+
+def listar_planes():
+    return PlanTuristico.query.all()
+
+def obtener_plan_por_id(plan_id):
+    return PlanTuristico.query.get(plan_id)
+
+resenas.py
+from app import db
+from app.models.resena import Resena
+
+def escribir_resena(usuario_id, plan_id, calificacion, comentario):
+    nueva = Resena(
+        usuario_id=usuario_id,
+        plan_id=plan_id,
+        calificacion=calificacion,
+        comentario=comentario
+    )
+    db.session.add(nueva)
+    db.session.commit()
+    return nueva
+
+def obtener_resenas_por_plan(plan_id):
+    return Resena.query.filter_by(plan_id=plan_id).all()
+
+usuarios.py
+from app import db
+from app.models.usuario import Usuario, TipoUsuario
+from sqlalchemy.exc import IntegrityError
+
+def registrar_usuario(nombre, email, contrasena, tipo=TipoUsuario.TURISTA, foto_perfil=None):
+    nuevo = Usuario(
+        nombre=nombre,
+        email=email,
+        contrasena=contrasena,
+        tipo=tipo,
+        foto_perfil=foto_perfil
+    )
+    db.session.add(nuevo)
+    try:
+        db.session.commit()
+        return {'ok': True}
+    except IntegrityError:
+        db.session.rollback()
+        return {'ok': False, 'error': 'El correo ya está registrado'}
+
+def listar_usuarios():
+    return Usuario.query.all()
+
+def obtener_usuario_por_id(usuario_id):
+    return Usuario.query.get(usuario_id)

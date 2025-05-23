@@ -4,7 +4,14 @@
 <h2>Planes Favoritos</h2>
 <ul>
   {% for f in favoritos %}
-    <li>{{ f.plan.nombre }}</li>
+    <li>
+      {{ f.plan.nombre }}
+      <a href="{{ url_for('favoritos.eliminar', plan_id=f.plan_id) }}" class="btn-secundario" style="margin-left: 1rem;">
+        Eliminar
+      </a>
+    </li>
+  {% else %}
+    <p>No tienes planes en favoritos todavía.</p>
   {% endfor %}
 </ul>
 {% endblock %}
