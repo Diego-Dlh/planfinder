@@ -1,65 +1,277 @@
-<!-- home.html -->
 {% extends "base.html" %}
 {% block title %}Inicio{% endblock %}
+
 {% block content %}
 <section class="bienvenida">
   <h2>Explora tus próximas aventuras</h2>
   <p>Descubre y reserva planes turísticos increíbles según tus gustos y presupuesto.</p>
 </section>
+
 <section class="filtro-container">
   <h3>Filtrar planes turísticos</h3>
-  <form method="get" class="formulario-filtros">
+  <form method="get" class="formulario-filtros" aria-label="Formulario de filtros de planes turísticos">
     <div class="campo">
       <label for="categoria_id">Categoría:</label>
       <select name="categoria_id" id="categoria_id">
         <option value="">Todas</option>
         {% for cat in categorias %}
-        <option value="{{ cat.id }}" {% if request.args.get('categoria_id') == cat.id|string %}selected{% endif %}>{{ cat.nombre }}</option>
+          <option value="{{ cat.id }}" {% if request.args.get('categoria_id') == cat.id|string %}selected{% endif %}>{{ cat.nombre }}</option>
         {% endfor %}
       </select>
     </div>
+
     <div class="campo">
       <label for="ubicacion_id">Ubicación:</label>
       <select name="ubicacion_id" id="ubicacion_id">
         <option value="">Todas</option>
         {% for u in ubicaciones %}
-        <option value="{{ u.id }}" {% if request.args.get('ubicacion_id') == u.id|string %}selected{% endif %}>{{ u.nombre }}</option>
+          <option value="{{ u.id }}" {% if request.args.get('ubicacion_id') == u.id|string %}selected{% endif %}>{{ u.nombre }}</option>
         {% endfor %}
       </select>
     </div>
+
     <div class="campo">
       <label for="precio_min">Precio mínimo:</label>
-      <input type="number" name="precio_min" id="precio_min" step="0.01" value="{{ request.args.get('precio_min', '') }}">
+      <input type="number" name="precio_min" id="precio_min" step="0.01" min="0" value="{{ request.args.get('precio_min', '') }}" placeholder="0.00" />
     </div>
+
     <div class="campo">
       <label for="precio_max">Precio máximo:</label>
-      <input type="number" name="precio_max" id="precio_max" step="0.01" value="{{ request.args.get('precio_max', '') }}">
+      <input type="number" name="precio_max" id="precio_max" step="0.01" min="0" value="{{ request.args.get('precio_max', '') }}" placeholder="0.00" />
     </div>
+
     <button type="submit" class="btn-filtrar">Buscar</button>
   </form>
 </section>
+
 <section class="planes-encontrados">
   <h3>Planes disponibles</h3>
-  <div class="grid-planes">
+
+  {% if planes %}
+  <div class="grid-planes" role="list">
     {% for plan in planes %}
-    <div class="tarjeta-plan">
-      <img src="{{ plan.imagenes[0].url }}" alt="imagen del plan">
+    <article class="tarjeta-plan" role="listitem">
+      <figure class="imagen-plan">
+        {% if plan.imagenes|length > 0 %}
+          <img src="{{ plan.imagenes[0].url }}" alt="Imagen del plan {{ plan.nombre }}" loading="lazy" />
+        {% else %}
+          <img src="{{ url_for('static', filename='img/default.jpg') }}" alt="Imagen por defecto" loading="lazy" />
+        {% endif %}
+      </figure>
+
       <div class="info-plan">
         <h4>{{ plan.nombre }}</h4>
-        <p class="precio">${{ plan.precio }}</p>
-        <p>{{ plan.descripcion[:100] }}...</p>
+        <p class="precio">${{ "%.2f"|format(plan.precio) }}</p>
+        <p class="descripcion-corta">{{ plan.descripcion[:120] }}{% if plan.descripcion|length > 120 %}...{% endif %}</p>
         <div class="acciones">
-          <a href="{{ url_for('planes.detalle', plan_id=plan.id) }}" class="btn-detalles">Ver detalles</a>
+          <a href="{{ url_for('planes.detalle', plan_id=plan.id) }}" class="btn btn-detalles">Ver detalles</a>
           {% if usuario_id %}
-          <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn-secundario">Favorito</a>
-          <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn-secundario">Reseñas</a>
+          <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn btn-secundario">Favorito</a>
+          <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn btn-secundario">Reseñas</a>
           {% endif %}
         </div>
       </div>
-    </div>
-    {% else %}
-    <p>No se encontraron planes con los filtros seleccionados.</p>
+    </article>
     {% endfor %}
   </div>
+  {% else %}
+  <p class="sin-resultados">No se encontraron planes con los filtros seleccionados.</p>
+  {% endif %}
 </section>
+
+
+<style>
+.bienvenida {
+  text-align: center;
+  margin: 2rem 0 3rem;
+  color: #34495e;
+}
+.bienvenida h2 {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+.bienvenida p {
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  color: #566374;
+}
+
+.filtro-container {
+  max-width: 900px;
+  margin: 0 auto 3rem;
+  padding: 1rem;
+  background-color: #f0f4f8;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+}
+
+.formulario-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  justify-content: center;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  max-width: 220px;
+}
+
+.campo label {
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.campo select,
+.campo input[type="number"] {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  transition: border-color 0.2s ease;
+}
+
+.campo select:focus,
+.campo input[type="number"]:focus {
+  outline: none;
+  border-color: #2980b9;
+}
+
+.btn-filtrar {
+  background-color: #2980b9;
+  color: white;
+  font-weight: 700;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  align-self: center;
+  transition: background-color 0.3s ease;
+}
+
+.btn-filtrar:hover,
+.btn-filtrar:focus {
+  background-color: #1f6391;
+}
+
+.planes-encontrados {
+  max-width: 960px;
+  margin: 0 auto 4rem;
+}
+
+.grid-planes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.8rem;
+}
+
+.tarjeta-plan {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.tarjeta-plan:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 15px rgb(0 0 0 / 0.15);
+}
+
+.imagen-plan img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.info-plan {
+  padding: 1rem 1.2rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.info-plan h4 {
+  margin: 0 0 0.5rem;
+  color: #2c3e50;
+}
+
+.precio {
+  font-weight: 700;
+  color: #2980b9;
+  margin-bottom: 0.6rem;
+}
+
+.descripcion-corta {
+  flex-grow: 1;
+  color: #555;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.acciones {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  color: white;
+  transition: background-color 0.25s ease;
+  user-select: none;
+  display: inline-block;
+}
+
+.btn-detalles {
+  background-color: #27ae60;
+}
+
+.btn-detalles:hover,
+.btn-detalles:focus {
+  background-color: #1e8449;
+}
+
+.btn-secundario {
+  background-color: #2980b9;
+}
+
+.btn-secundario:hover,
+.btn-secundario:focus {
+  background-color: #1f6391;
+}
+
+.sin-resultados {
+  text-align: center;
+  color: #777;
+  font-size: 1.1rem;
+  margin-top: 3rem;
+}
+
+@media (max-width: 600px) {
+  .formulario-filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .campo {
+    max-width: 100%;
+  }
+  .acciones {
+    justify-content: center;
+  }
+}
+</style>
 {% endblock %}

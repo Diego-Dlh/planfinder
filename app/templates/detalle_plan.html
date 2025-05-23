@@ -3,32 +3,40 @@
 
 {% block content %}
 <div class="detalle-plan-container">
-  <h2 class="titulo-plan">{{ plan.nombre }}</h2>
+  <h1 class="titulo-plan">{{ plan.nombre }}</h1>
 
   <section class="info-general">
-    <p><strong>Descripción:</strong> {{ plan.descripcion }}</p>
-    <p><strong>Precio:</strong> ${{ plan.precio }}</p>
-    <p><strong>Duración:</strong> {{ plan.duracion }} horas</p>
-    <p><strong>Calificación promedio:</strong>
-      {{ plan.promedio_calificacion if plan.promedio_calificacion else 'Sin calificar' }} ⭐
-    </p>
+    <p><strong>Descripción:</strong></p>
+    <p class="descripcion-plan">{{ plan.descripcion }}</p>
+
+    <div class="info-atributos">
+      <div><strong>Precio:</strong> ${{ "%.2f"|format(plan.precio) }}</div>
+      <div><strong>Duración:</strong> {{ plan.duracion }} horas</div>
+      <div><strong>Calificación promedio:</strong> 
+        {% if plan.promedio_calificacion %}
+          {{ "%.1f"|format(plan.promedio_calificacion) }} ⭐
+        {% else %}
+          Sin calificar
+        {% endif %}
+      </div>
+    </div>
   </section>
 
   {% if imagenes %}
   <section class="galeria">
-    <h3>Galería de Imágenes</h3>
+    <h2>Galería de Imágenes</h2>
     <div class="galeria-imagenes">
       {% for img in imagenes %}
-      <img src="{{ img.url }}" alt="Imagen del plan" class="img-miniatura">
+      <img src="{{ img.url }}" alt="Imagen del plan {{ loop.index }}" class="img-miniatura" loading="lazy" />
       {% endfor %}
     </div>
   </section>
   {% endif %}
 
-  {% if ubicacion %}
+  {% if ubicacion and ubicacion.coordenadas %}
   <section class="ubicacion">
-    <h3>Ubicación</h3>
-    <div id="map" style="height: 300px; border-radius: 10px; margin-bottom: 1rem;"></div>
+    <h2>Ubicación</h2>
+    <div id="map" aria-label="Mapa de la ubicación del plan" style="height: 320px; border-radius: 8px; margin-bottom: 1rem;"></div>
     <p><strong>{{ ubicacion.nombre }}</strong> - {{ ubicacion.direccion }}</p>
   </section>
   {% endif %}
@@ -39,16 +47,16 @@
       <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn btn-secundario">Escribir reseña</a>
     {% endif %}
     <a href="{{ url_for('planes.agregar_imagen', plan_id=plan.id) }}" class="btn btn-secundario">Agregar imagen</a>
-    <a href="https://twitter.com/intent/tweet?text={{ plan.nombre }} {{ request.url }}" target="_blank" class="btn-redes">Compartir en Twitter</a>
-    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank" class="btn-redes">Compartir en Facebook</a>
+    <a href="https://twitter.com/intent/tweet?text={{ plan.nombre }} {{ request.url }}" target="_blank" rel="noopener" class="btn btn-redes btn-twitter" aria-label="Compartir en Twitter">Twitter</a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank" rel="noopener" class="btn btn-redes btn-facebook" aria-label="Compartir en Facebook">Facebook</a>
   </section>
 
   <section class="resenas">
-    <h3>Reseñas</h3>
+    <h2>Reseñas</h2>
     {% if resenas %}
     <ul class="lista-resenas">
       {% for r in resenas %}
-      <li><strong>{{ r.calificacion }}⭐</strong> - {{ r.comentario }}</li>
+      <li><strong>{{ "%.1f"|format(r.calificacion) }} ⭐</strong> — {{ r.comentario|e }}</li>
       {% endfor %}
     </ul>
     {% else %}
@@ -57,21 +65,161 @@
   </section>
 </div>
 
-{% if ubicacion %}
+{% if ubicacion and ubicacion.coordenadas %}
 <!-- Leaflet Map -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 <script>
-  const mapa = L.map('map').setView(
-    [{{ ubicacion.coordenadas.split(',')[0] }}, {{ ubicacion.coordenadas.split(',')[1] }}],
-    13
-  );
+  const coords = "{{ ubicacion.coordenadas }}".split(",");
+  const lat = parseFloat(coords[0].trim());
+  const lng = parseFloat(coords[1].trim());
+  const mapa = L.map('map').setView([lat, lng], 13);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+    attribution: '© OpenStreetMap contributors'
   }).addTo(mapa);
-  L.marker(
-    [{{ ubicacion.coordenadas.split(',')[0] }}, {{ ubicacion.coordenadas.split(',')[1] }}]
-  ).addTo(mapa).bindPopup('{{ ubicacion.nombre }}').openPopup();
+  L.marker([lat, lng]).addTo(mapa).bindPopup('{{ ubicacion.nombre|e }}').openPopup();
 </script>
 {% endif %}
+
+<style>
+.detalle-plan-container {
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.titulo-plan {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  text-align: center;
+}
+
+.info-general {
+  background: #f9f9f9;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.descripcion-plan {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  color: #444;
+}
+
+.info-atributos {
+  display: flex;
+  justify-content: space-around;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.galeria {
+  margin-bottom: 2rem;
+}
+
+.galeria-imagenes {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.img-miniatura {
+  max-width: 250px;   /* antes 150px */
+  max-height: 180px;  /* antes 100px */
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.img-miniatura:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.3);
+}
+
+
+.ubicacion {
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 500;
+  color: #2d3a50;
+}
+
+.acciones-principales {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.3rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  border: none;
+  color: white;
+}
+
+.btn-secundario {
+  background-color: #3498db;
+}
+.btn-secundario:hover {
+  background-color: #2980b9;
+}
+
+.btn-redes {
+  background-color: #3b5998; /* default facebook blue */
+}
+.btn-twitter {
+  background-color: #1da1f2;
+}
+.btn-twitter:hover {
+  background-color: #0d95e8;
+}
+.btn-facebook:hover {
+  background-color: #2d4373;
+}
+
+.resenas {
+  max-width: 600px;
+  margin: 0 auto 3rem;
+}
+
+.lista-resenas {
+  list-style: none;
+  padding-left: 0;
+  font-size: 1.05rem;
+  color: #2c3e50;
+}
+
+.lista-resenas li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ddd;
+}
+
+@media (max-width: 600px) {
+  .info-atributos {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  .galeria-imagenes {
+    justify-content: flex-start;
+  }
+  .btn, .btn-secundario, .btn-redes {
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>
 {% endblock %}

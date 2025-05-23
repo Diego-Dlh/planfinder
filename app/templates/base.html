@@ -1,36 +1,145 @@
-<!-- base.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Gestión de Planes{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Gestión de Planes{% endblock %}</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+  
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}" />
+  
+  <style>
+    /* Reset y base */
+    body {
+      margin: 0; 
+      font-family: 'Montserrat', sans-serif;
+      background: #f5f8fa;
+      color: #2c3e50;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    
+    /* Header y Nav */
+    header.header-principal {
+      background-color: #2980b9;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header.header-principal h1 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.8rem;
+    }
+    nav.nav-principal {
+      display: flex;
+      gap: 1.2rem;
+      margin-top: 0.4rem;
+      flex-wrap: wrap;
+    }
+    nav.nav-principal a {
+      color: white;
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+    nav.nav-principal a:hover,
+    nav.nav-principal a.active {
+      background-color: #1f6391;
+    }
+    
+    /* Mensajes flash */
+    ul.mensajes {
+      max-width: 900px;
+      margin: 1rem auto;
+      padding: 1rem;
+      background: #eaf4fc;
+      border-left: 4px solid #2980b9;
+      color: #1a3c6e;
+      font-weight: 600;
+      border-radius: 4px;
+    }
+    ul.mensajes li {
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Main y Footer */
+    main {
+      flex-grow: 1;
+      max-width: 900px;
+      margin: 1.5rem auto 3rem;
+      padding: 0 1rem;
+    }
+    footer.footer {
+      text-align: center;
+      padding: 1rem 0;
+      background: #2980b9;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+    
+    /* Responsive Nav simple */
+    @media (max-width: 600px) {
+      nav.nav-principal {
+        justify-content: center;
+      }
+    }
+  </style>
+  
 </head>
 <body>
-    <header class="header-principal">
-        <h1>Turismo Planes</h1>
-        <nav class="nav-principal">
-            <a href="{{ url_for('main.home') }}">Inicio</a>
-            <a href="{{ url_for('planes.listar') }}">Planes</a>
-            <a href="{{ url_for('favoritos.listar') }}">Favoritos</a>
-            <a href="{{ url_for('auth.login') }}">Iniciar Sesión</a>
-            <a href="{{ url_for('usuarios.perfil') }}">Mi Perfil</a>
-        </nav>
-    </header>
-    <main>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <ul class="mensajes">
-              {% for message in messages %}
-                <li>{{ message }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
-    </main>
-    <footer class="footer">
-        <p>&copy; 2023 Turismo Planes. Todos los derechos reservados.</p>
-    </footer>
+  <header class="header-principal" role="banner">
+    <h1>PlanFinder</h1>
+    <nav class="nav-principal" role="navigation" aria-label="Menú principal">
+      <a href="{{ url_for('main.home') }}" class="{% if request.endpoint == 'main.home' %}active{% endif %}">Inicio</a>
+      <a href="{{ url_for('planes.listar') }}" class="{% if request.endpoint.startswith('planes.') %}active{% endif %}">Planes</a>
+      <a href="{{ url_for('favoritos.listar') }}" class="{% if request.endpoint.startswith('favoritos.') %}active{% endif %}">Favoritos</a>
+
+      {% if session.get('usuario_id') %}
+        <a href="{{ url_for('usuarios.perfil') }}" class="{% if request.endpoint.startswith('usuarios.') %}active{% endif %}">Mi Perfil</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar Sesión</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" class="{% if request.endpoint == 'auth.login' %}active{% endif %}">Iniciar Sesión</a>
+      {% endif %}
+    </nav>
+  </header>
+  
+  <main role="main">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="mensajes" role="alert" aria-live="assertive">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    
+    {% block content %}{% endblock %}
+  </main>
+  
+  <footer class="footer" role="contentinfo">
+    <p>&copy; 2025 PlanFinder. Todos los derechos reservados.</p>
+  </footer>
 </body>
 </html>
+
