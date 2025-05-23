@@ -10,13 +10,9 @@ def create_app():
     app.config.from_object(Config)
 
     db.init_app(app)
-    db.create_all(app=app)  # Crea las tablas en la base de datos
+    # Crear la base de datos si no existe
     with app.app_context():
-        try:
-            db.create_all()
-            print("Tablas creadas correctamente")
-        except Exception as e:
-            print("Error creando tablas:", e)
+        db.create_all()
     print("Base de datos inicializada")
     # Registro de blueprints
     from app.controllers import usuarios, planes, resenas, favoritos, auth, admin, main
