@@ -1,12 +1,15 @@
 from app import db
 from app.models.usuario import Usuario, TipoUsuario
 from sqlalchemy.exc import IntegrityError
+from werkzeug.security import generate_password_hash
+
 
 def registrar_usuario(nombre, email, contrasena, tipo=TipoUsuario.TURISTA, foto_perfil=None):
+    hash_contrasena = generate_password_hash(contrasena)
     nuevo = Usuario(
         nombre=nombre,
         email=email,
-        contrasena=contrasena,
+        contrasena=hash_contrasena,
         tipo=tipo,
         foto_perfil=foto_perfil
     )

@@ -11,13 +11,24 @@ def login():
         resultado = autenticar_usuario(email, contrasena)
         if resultado['ok']:
             session['usuario_id'] = resultado['usuario'].id
+            session['rol'] = resultado['usuario'].tipo.value  # Guarda el rol aquí
             flash('Sesión iniciada correctamente')
             return redirect(url_for('planes.listar'))
         flash(resultado['error'])
     return render_template('login.html')
+
 
 @bp.route('/logout')
 def logout():
     session.clear()
     flash('Sesión cerrada')
     return redirect(url_for('auth.login'))
+
+from werkzeug.security import check_password_hash
+from app.models.usuario import Usuario
+
+def autenticar_usuario(email, contrasena):
+    usuario = Usuario.query.filter_by(email=email).first()
+    if usuario and check_password_hash(usuario.contrasena, contrasena):
+        return {'ok': True, 'usuario': usuario}
+    return {'ok': False, 'error': 'Credenciales inválidas'}

@@ -25,6 +25,8 @@ from flask import session, render_template, request, redirect, url_for, flash
 from app.models.usuario import Usuario
 from app import db
 
+from werkzeug.security import generate_password_hash
+
 @bp.route('/perfil', methods=['GET', 'POST'])
 def perfil():
     usuario_id = session.get('usuario_id')
@@ -40,7 +42,7 @@ def perfil():
         foto = request.form['foto_perfil']
 
         if nueva_contrasena:
-            usuario.contrasena = nueva_contrasena
+            usuario.contrasena = generate_password_hash(nueva_contrasena)
         if foto:
             usuario.foto_perfil = foto
 

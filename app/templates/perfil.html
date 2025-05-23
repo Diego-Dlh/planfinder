@@ -4,7 +4,7 @@
 {% block content %}
 <h2>Mi Perfil</h2>
 
-<form method="POST">
+<form method="POST" class="formulario-estilizado">
     <label>Nombre:</label>
     <input type="text" name="nombre" value="{{ usuario.nombre }}" required>
 
@@ -25,6 +25,12 @@
         <img src="{{ usuario.foto_perfil }}" alt="foto perfil" width="150">
     {% endif %}
 
-    <button type="submit">Guardar cambios</button>
+    <button type="submit" class="btn-filtrar">Guardar cambios</button>
 </form>
+
+<!-- Botón Cerrar Sesión -->
+<form action="{{ url_for('auth.logout') }}" method="get" style="margin-top: 1.5rem;">
+    <button type="submit" class="btn-cerrar-sesion">Cerrar sesión</button>
+</form>
+
 {% endblock %}
