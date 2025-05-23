@@ -25,10 +25,14 @@
   {% if imagenes %}
   <section class="galeria">
     <h2>Galería de Imágenes</h2>
-    <div class="galeria-imagenes">
-      {% for img in imagenes %}
-      <img src="{{ img.url }}" alt="Imagen del plan {{ loop.index }}" class="img-miniatura" loading="lazy" />
-      {% endfor %}
+    <div class="carrusel">
+      <button class="btn-scroll left" aria-label="Desplazar imágenes a la izquierda">&lt;</button>
+      <div class="imagenes-contenedor" tabindex="0">
+        {% for img in imagenes %}
+        <img src="{{ img.url }}" alt="Imagen del plan {{ loop.index }}" class="img-miniatura" loading="lazy" />
+        {% endfor %}
+      </div>
+      <button class="btn-scroll right" aria-label="Desplazar imágenes a la derecha">&gt;</button>
     </div>
   </section>
   {% endif %}
@@ -115,33 +119,83 @@
   justify-content: space-around;
   font-weight: 600;
   color: #34495e;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .galeria {
   margin-bottom: 2rem;
 }
 
-.galeria-imagenes {
+.carrusel {
+  position: relative;
   display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.imagenes-contenedor {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
   gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
+  padding: 0.5rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: #2980b9 #f0f4f8;
+}
+
+.imagenes-contenedor::-webkit-scrollbar {
+  height: 8px;
+}
+
+.imagenes-contenedor::-webkit-scrollbar-track {
+  background: #f0f4f8;
+  border-radius: 4px;
+}
+
+.imagenes-contenedor::-webkit-scrollbar-thumb {
+  background-color: #2980b9;
+  border-radius: 4px;
 }
 
 .img-miniatura {
-  max-width: 250px;   /* antes 150px */
-  max-height: 180px;  /* antes 100px */
+  flex: 0 0 auto;
+  max-width: 250px;
+  max-height: 180px;
   object-fit: cover;
   border-radius: 6px;
   box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
   cursor: pointer;
   transition: transform 0.3s ease;
 }
+
 .img-miniatura:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgb(0 0 0 / 0.3);
 }
 
+.btn-scroll {
+  background: #2980b9;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-scroll:hover {
+  background: #1f6391;
+}
+
+.btn-scroll:focus {
+  outline: 2px solid #1f6391;
+}
 
 .ubicacion {
   margin-bottom: 2rem;
@@ -213,8 +267,8 @@
     gap: 0.5rem;
     text-align: center;
   }
-  .galeria-imagenes {
-    justify-content: flex-start;
+  .imagenes-contenedor {
+    gap: 0.5rem;
   }
   .btn, .btn-secundario, .btn-redes {
     width: 100%;
@@ -222,4 +276,20 @@
   }
 }
 </style>
+
+<script>
+  // Controlar scroll del carrusel con botones
+  document.addEventListener('DOMContentLoaded', () => {
+    const contenedor = document.querySelector('.imagenes-contenedor');
+    const btnIzq = document.querySelector('.btn-scroll.left');
+    const btnDer = document.querySelector('.btn-scroll.right');
+
+    btnIzq.addEventListener('click', () => {
+      contenedor.scrollBy({ left: -260, behavior: 'smooth' });
+    });
+    btnDer.addEventListener('click', () => {
+      contenedor.scrollBy({ left: 260, behavior: 'smooth' });
+    });
+  });
+</script>
 {% endblock %}
