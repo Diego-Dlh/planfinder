@@ -1,25 +1,15 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from .config import Config
+from app import create_app, db
+from app.models.usuario import Usuario
+from app.models.plan import PlanTuristico
+from app.models.resena import Resena
+from app.models.favorito import Favorito
+from app.models.administrador import Administrador
+# importa aquí todos tus modelos
 
-db = SQLAlchemy()
+app = create_app()
 
-
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object(Config)
-
-    db.init_app(app)
-
-    # Registro de blueprints
-    from app.controllers import usuarios, planes, resenas, favoritos, auth, admin, main
-    app.register_blueprint(main.bp)
-    app.register_blueprint(usuarios.bp)
-    app.register_blueprint(planes.bp)
-    app.register_blueprint(resenas.bp)
-    app.register_blueprint(favoritos.bp)
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(admin.bp)
-    
-    return app
-
+if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+        print("Tablas creadas correctamente")
+    app.run(host="0.0.0.0", port=5000, debug=False)
