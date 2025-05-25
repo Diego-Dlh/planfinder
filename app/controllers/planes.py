@@ -10,8 +10,44 @@ bp = Blueprint('planes', __name__, url_prefix='/planes')
 # Listado de planes
 @bp.route('/')
 def listar():
-    planes = listar_planes()
-    return render_template('planes_listar.html', planes=planes)
+    usuario_id = session.get('usuario_id')
+
+    # Captura de filtros desde la URL
+    categoria_id = request.args.get('categoria_id')
+    ubicacion_id = request.args.get('ubicacion_id')
+    precio_min = request.args.get('precio_min')
+    precio_max = request.args.get('precio_max')
+    imagenes = request.args.get('imagenes')
+
+    # Query base
+    from app.models.plan import PlanTuristico
+    from app.models.categoria import Categoria
+    query = PlanTuristico.query
+
+    if categoria_id:
+        query = query.filter_by(categoria_id=categoria_id)
+    if ubicacion_id:
+        query = query.filter_by(ubicacion_id=ubicacion_id)
+    if precio_min:
+        query = query.filter(PlanTuristico.precio >= float(precio_min))
+    if precio_max:
+        query = query.filter(PlanTuristico.precio <= float(precio_max))
+    if imagenes:
+        query = query.filter(PlanTuristico.imagenes.any())
+
+    planes = query.all()
+
+    categorias = Categoria.query.all()
+    ubicaciones = Ubicacion.query.all()
+
+    return render_template(
+        'planes_listar.html',
+        planes=planes,
+        categorias=categorias,
+        ubicaciones=ubicaciones,
+        usuario_id=usuario_id
+    )
+
 
 # Crear nuevo plan (solo administrador)
 @bp.route('/nuevo', methods=['GET', 'POST'])

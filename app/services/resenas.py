@@ -2,6 +2,8 @@ from app import db
 from app.models.resena import Resena
 from app.models.plan import PlanTuristico
 from sqlalchemy import func
+from app.models.usuario import Usuario
+
 
 def escribir_resena(usuario_id, plan_id, calificacion, comentario):
     nueva = Resena(
@@ -22,4 +24,31 @@ def escribir_resena(usuario_id, plan_id, calificacion, comentario):
     return nueva
 
 def obtener_resenas_por_plan(plan_id):
-    return Resena.query.filter_by(plan_id=plan_id).all()
+    resenas = (
+        db.session.query(
+            Resena.comentario,
+            Resena.calificacion,
+            Usuario.nombre.label('usuario_nombre')
+        )
+        .join(Usuario, Resena.usuario_id == Usuario.id)
+        .filter(Resena.plan_id == plan_id)
+        .order_by(Resena.id.desc())
+        .all()
+    )
+
+    return [
+        {
+            'comentario': r.comentario,
+            'calificacion': r.calificacion,
+            'usuario_nombre': r.usuario_nombre
+        }
+        for r in resenas
+    ]
+
+
+from app.models.resena import Resena
+import random
+
+def obtener_resenas_aleatorias(n=3):
+    todas = Resena.query.all()
+    return random.sample(todas, min(n, len(todas)))

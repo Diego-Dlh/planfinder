@@ -1,84 +1,249 @@
+<!-- detalle-plan.html completamente maquetado como la imagen -->
 {% extends "base.html" %}
 {% block title %}{{ plan.nombre }}{% endblock %}
 
 {% block content %}
-<div class="detalle-plan-container">
-  <h1 class="titulo-plan">{{ plan.nombre }}</h1>
+<style>
+/* CONTENEDOR SUPERIOR */
+.hero-plan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f7fa;
+  padding: 4rem 2rem 2rem;
+  gap: 3rem;
+}
 
-  <section class="info-general">
-    <p><strong>Descripción:</strong></p>
-    <p class="descripcion-plan">{{ plan.descripcion }}</p>
+.hero-img {
+  flex: 1 1 300px;
+  max-width: 450px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50% 40% 30% 60% / 60% 30% 50% 40%;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
 
-    <div class="info-atributos">
-      <div><strong>Precio:</strong> ${{ "%.2f"|format(plan.precio) }}</div>
-      <div><strong>Duración:</strong> {{ plan.duracion }} horas</div>
-      <div><strong>Calificación promedio:</strong> 
-        {% if plan.promedio_calificacion %}
-          {{ "%.1f"|format(plan.promedio_calificacion) }} ⭐
-        {% else %}
-          Sin calificar
-        {% endif %}
+.hero-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-info {
+  flex: 1 1 300px;
+  max-width: 500px;
+}
+
+.hero-info h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.hero-info p {
+  font-size: 1rem;
+  color: #2563eb;
+  margin-bottom: 2rem;
+}
+
+.hero-info .btn {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.hero-info .btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* MAPA */
+.map-section {
+  width: 100%;
+  margin: 2rem 0;
+}
+
+.map-section #map {
+  width: 100%;
+  height: 400px;
+  border-radius: 0;
+}
+
+/* CARRUSEL */
+.seccion-carrusel {
+  max-width: 1200px;
+  margin: 3rem auto;
+  padding: 0 1rem;
+}
+
+.seccion-carrusel h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.carrusel {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 1rem;
+}
+
+.tarjeta-mini {
+  flex: 0 0 280px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.tarjeta-mini img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.tarjeta-mini .info {
+  padding: 1rem;
+}
+
+.tarjeta-mini h3 {
+  font-size: 1rem;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.tarjeta-mini p {
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+/* FORMULARIO RESEÑA */
+.reseña-section {
+  max-width: 600px;
+  margin: 4rem auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+
+.reseña-section h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+}
+
+.reseña-section textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 120px;
+  margin-bottom: 1rem;
+}
+
+.reseña-section .btn {
+  display: block;
+  margin: 0 auto;
+  padding: 0.75rem 2rem;
+  background-color: #2563eb;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.galeria-imagenes {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  overflow-x: auto;
+}
+
+.img-miniatura {
+  flex: 0 0 auto;
+  width: 240px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+</style>
+
+<!-- HERO SECTION -->
+<section class="hero-plan">
+  <div class="hero-img">
+    <img src="{{ imagenes[0].url if imagenes else '/static/img/default.jpg' }}" alt="Imagen principal">
+  </div>
+  <div class="hero-info">
+    <h1>{{ plan.nombre }}</h1>
+    <p>{{ plan.descripcion }}</p>
+    <a href="#" class="btn">FAVORITO</a>
+  </div>
+</section>
+
+<!-- MAPA -->
+<section class="map-section">
+  <div id="map"></div>
+</section>
+
+<!-- PLANES RELACIONADOS -->
+<section class="seccion-carrusel">
+  <h2>¿Qué más hay para hacer?</h2>
+  <div class="galeria-imagenes">
+    {% for img in imagenes %}
+    <img src="{{ img.url }}" alt="Imagen del plan {{ loop.index }}" class="img-miniatura">
+    {% endfor %}
+  </div>
+</section>
+
+<!-- RESEÑAS -->
+<section class="seccion-carrusel">
+  <h2>Testimonios</h2>
+  <div class="carrusel">
+    {% for r in resenas %}
+    <div class="tarjeta-mini">
+      <div class="info">
+        <p style="font-style: italic">"{{ r.comentario }}"</p>
+        <p><strong>{{ r.usuario_nombre }}</strong><br/>{{ "%.1f"|format(r.calificacion) }} ⭐</p>
       </div>
     </div>
-  </section>
+    {% endfor %}
+  </div>
+</section>
 
-  {% if imagenes %}
-  <section class="galeria">
-    <h2>Galería de Imágenes</h2>
-    <div class="carrusel">
-      <button class="btn-scroll left" aria-label="Desplazar imágenes a la izquierda">&lt;</button>
-      <div class="imagenes-contenedor" tabindex="0">
-        {% for img in imagenes %}
-        <img src="{{ img.url }}" alt="Imagen del plan {{ loop.index }}" class="img-miniatura" loading="lazy" />
-        {% endfor %}
-      </div>
-      <button class="btn-scroll right" aria-label="Desplazar imágenes a la derecha">&gt;</button>
-    </div>
-  </section>
-  {% endif %}
-
-  {% if ubicacion and ubicacion.coordenadas %}
-  <section class="ubicacion">
-    <h2>Ubicación</h2>
-    <div id="map" aria-label="Mapa de la ubicación del plan" style="height: 320px; border-radius: 8px; margin-bottom: 1rem;"></div>
-    <p><strong>{{ ubicacion.nombre }}</strong> - {{ ubicacion.direccion }}</p>
-  </section>
-  {% endif %}
-
-  <section class="acciones-principales">
-    {% if usuario_id %}
-      <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn btn-secundario">Agregar a favoritos</a>
-      <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn btn-secundario">Escribir reseña</a>
-    {% endif %}
-
-    {% if session.get('rol') == 'Admin' %}
-      <!-- Solo los administradores pueden agregar imágenes -->
-      <a href="{{ url_for('planes.agregar_imagen', plan_id=plan.id) }}" class="btn btn-secundario">Agregar imagen</a>
-      <a href="{{ url_for('planes.editar', plan_id=plan.id) }}" class="btn btn-secundario">Editar Plan</a>
-    {% else %}
-      <p>Acción no permitida. Solo los administradores pueden modificar el plan.</p>
-    {% endif %}
-
-    <a href="https://twitter.com/intent/tweet?text={{ plan.nombre }} {{ request.url }}" target="_blank" rel="noopener" class="btn btn-redes btn-twitter" aria-label="Compartir en Twitter">Twitter</a>
-    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank" rel="noopener" class="btn btn-redes btn-facebook" aria-label="Compartir en Facebook">Facebook</a>
-  </section>
-
-  <section class="resenas">
-    <h2>Reseñas</h2>
-    {% if resenas %}
-    <ul class="lista-resenas">
-      {% for r in resenas %}
-      <li><strong>{{ "%.1f"|format(r.calificacion) }} ⭐</strong> — {{ r.comentario|e }}</li>
+<!-- FORMULARIO DE RESEÑA -->
+<section class="reseña-section">
+  <h2>Ingresa tu reseña</h2>
+  <form method="POST" action="{{ url_for('resenas.reseñar', plan_id=plan.id) }}">
+    <div class="estrellas">
+      {% for i in range(5, 0, -1) %}
+        <input type="radio" id="star{{ i }}" name="calificacion" value="{{ i }}" required>
+        <label for="star{{ i }}">★</label>
       {% endfor %}
-    </ul>
-    {% else %}
-    <p>No hay reseñas aún. ¡Sé el primero en opinar!</p>
-    {% endif %}
-  </section>
-</div>
+    </div>
+    <textarea name="comentario" placeholder="Escribe tu opinión sobre el plan..." required></textarea>
+    <button class="btn" type="submit">ENVIAR</button>
+  </form>
+</section>
 
+
+<!-- MAPA SCRIPT -->
 {% if ubicacion and ubicacion.coordenadas %}
-<!-- Leaflet Map -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 <script>
@@ -92,212 +257,4 @@
   L.marker([lat, lng]).addTo(mapa).bindPopup('{{ ubicacion.nombre|e }}').openPopup();
 </script>
 {% endif %}
-
-<style>
-.detalle-plan-container {
-  max-width: 900px;
-  margin: 1rem auto;
-  padding: 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.titulo-plan {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  color: #2c3e50;
-  text-align: center;
-}
-
-.info-general {
-  background: #f9f9f9;
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-}
-
-.descripcion-plan {
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  line-height: 1.5;
-  color: #444;
-}
-
-.info-atributos {
-  display: flex;
-  justify-content: space-around;
-  font-weight: 600;
-  color: #34495e;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.galeria {
-  margin-bottom: 2rem;
-}
-
-.carrusel {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.imagenes-contenedor {
-  display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  gap: 1rem;
-  padding: 0.5rem 0;
-  scrollbar-width: thin;
-  scrollbar-color: #2980b9 #f0f4f8;
-}
-
-.imagenes-contenedor::-webkit-scrollbar {
-  height: 8px;
-}
-
-.imagenes-contenedor::-webkit-scrollbar-track {
-  background: #f0f4f8;
-  border-radius: 4px;
-}
-
-.imagenes-contenedor::-webkit-scrollbar-thumb {
-  background-color: #2980b9;
-  border-radius: 4px;
-}
-
-.img-miniatura {
-  flex: 0 0 auto;
-  max-width: 250px;
-  max-height: 180px;
-  object-fit: cover;
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.img-miniatura:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgb(0 0 0 / 0.3);
-}
-
-.btn-scroll {
-  background: #2980b9;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  font-weight: bold;
-  cursor: pointer;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-scroll:hover {
-  background: #1f6391;
-}
-
-.btn-scroll:focus {
-  outline: 2px solid #1f6391;
-}
-
-.ubicacion {
-  margin-bottom: 2rem;
-  text-align: center;
-  font-weight: 500;
-  color: #2d3a50;
-}
-
-.acciones-principales {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.btn {
-  display: inline-block;
-  padding: 0.6rem 1.3rem;
-  font-size: 1rem;
-  border-radius: 6px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.25s ease;
-  border: none;
-  color: white;
-}
-
-.btn-secundario {
-  background-color: #3498db;
-}
-.btn-secundario:hover {
-  background-color: #2980b9;
-}
-
-.btn-redes {
-  background-color: #3b5998; /* default facebook blue */
-}
-.btn-twitter {
-  background-color: #1da1f2;
-}
-.btn-twitter:hover {
-  background-color: #0d95e8;
-}
-.btn-facebook:hover {
-  background-color: #2d4373;
-}
-
-.resenas {
-  max-width: 600px;
-  margin: 0 auto 3rem;
-}
-
-.lista-resenas {
-  list-style: none;
-  padding-left: 0;
-  font-size: 1.05rem;
-  color: #2c3e50;
-}
-
-.lista-resenas li {
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #ddd;
-}
-
-@media (max-width: 600px) {
-  .info-atributos {
-    flex-direction: column;
-    gap: 0.5rem;
-    text-align: center;
-  }
-  .imagenes-contenedor {
-    gap: 0.5rem;
-  }
-  .btn, .btn-secundario, .btn-redes {
-    width: 100%;
-    text-align: center;
-  }
-}
-</style>
-
-<script>
-  // Controlar scroll del carrusel con botones
-  document.addEventListener('DOMContentLoaded', () => {
-    const contenedor = document.querySelector('.imagenes-contenedor');
-    const btnIzq = document.querySelector('.btn-scroll.left');
-    const btnDer = document.querySelector('.btn-scroll.right');
-
-    btnIzq.addEventListener('click', () => {
-      contenedor.scrollBy({ left: -260, behavior: 'smooth' });
-    });
-    btnDer.addEventListener('click', () => {
-      contenedor.scrollBy({ left: 260, behavior: 'smooth' });
-    });
-  });
-</script>
 {% endblock %}

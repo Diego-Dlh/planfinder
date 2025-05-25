@@ -13,9 +13,7 @@
       <div class="acciones-favorito">
         <a href="{{ url_for('planes.detalle', plan_id=f.plan_id) }}" class="btn btn-detalles" aria-label="Ver detalles de {{ f.plan.nombre }}">Detalles</a>
         
-        {% if session.get('rol') == 'Admin' %}
           <a href="{{ url_for('favoritos.eliminar', plan_id=f.plan_id) }}" class="btn btn-eliminar" aria-label="Eliminar {{ f.plan.nombre }} de favoritos">Eliminar</a>
-        {% endif %}
       </div>
     </li>
     {% endfor %}

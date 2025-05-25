@@ -5,7 +5,6 @@ from app.utils import admin_required  # Importamos el decorador para protección
 bp = Blueprint('favoritos', __name__, url_prefix='/favoritos')
 
 @bp.route('/agregar/<int:plan_id>')
-@admin_required  # Solo los administradores pueden agregar favoritos
 def agregar(plan_id):
     usuario_id = session.get('usuario_id')
     resultado = guardar_favorito(usuario_id, plan_id)
@@ -27,7 +26,6 @@ def listar():
     return render_template('favoritos.html', favoritos=favoritos)
 
 @bp.route('/eliminar/<int:plan_id>')
-@admin_required  # Solo los administradores pueden eliminar favoritos
 def eliminar(plan_id):
     usuario_id = session.get('usuario_id')
     resultado = eliminar_favorito(usuario_id, plan_id)

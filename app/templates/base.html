@@ -4,125 +4,156 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}Gestión de Planes{% endblock %}</title>
-  
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
-  
-  <!-- CSS principal -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}" />
-  
+
   <style>
-    /* Reset y base */
     body {
-      margin: 0; 
+      margin: 0;
       font-family: 'Montserrat', sans-serif;
       background: #f5f8fa;
-      color: #2c3e50;
-      min-height: 100vh;
+      color: #1f2937;
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
     }
+
     a {
       text-decoration: none;
       color: inherit;
     }
+
     ul {
       list-style: none;
-      padding-left: 0;
+      padding: 0;
       margin: 0;
     }
-    
-    /* Header y Nav */
+
     header.header-principal {
-      background-color: #2980b9;
+      background-color: #2563eb;
+      padding: 1rem 2rem;
       color: white;
-      padding: 0.8rem 1.5rem;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       position: sticky;
       top: 0;
       z-index: 100;
     }
-    header.header-principal h1 {
-      margin: 0;
-      font-weight: 600;
-      font-size: 1.8rem;
-    }
-    nav.nav-principal {
+
+    .navbar {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
-      gap: 1.2rem;
-      margin-top: 0.4rem;
+      align-items: center;
+      justify-content: space-between;
       flex-wrap: wrap;
     }
-    nav.nav-principal a {
-      color: white;
-      padding: 0.5rem 0.75rem;
-      border-radius: 4px;
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.2rem;
       font-weight: 600;
-      transition: background-color 0.3s ease;
     }
-    nav.nav-principal a:hover,
-    nav.nav-principal a.active {
-      background-color: #1f6391;
+
+    .logo img {
+      height: 28px;
     }
-    
-    /* Mensajes flash */
+
+    .logo .tag {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: #cbd5e1;
+    }
+
+    .nav-principal {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-weight: 500;
+    }
+
+    .nav-principal a {
+      color: white;
+      font-size: 0.95rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .nav-principal a:hover,
+    .nav-principal a.active {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
     ul.mensajes {
       max-width: 900px;
-      margin: 1rem auto;
-      padding: 1rem;
-      background: #eaf4fc;
-      border-left: 4px solid #2980b9;
-      color: #1a3c6e;
-      font-weight: 600;
-      border-radius: 4px;
+      margin: 2rem auto;
+      padding: 1rem 1.5rem;
+      background: #e0edff;
+      border-left: 4px solid #2563eb;
+      color: #1e40af;
+      border-radius: 8px;
     }
-    ul.mensajes li {
-      margin-bottom: 0.5rem;
-    }
-    
-    /* Main y Footer */
+
     main {
       flex-grow: 1;
-      max-width: 900px;
-      margin: 1.5rem auto 3rem;
+      max-width: 1100px;
+      margin: 2rem auto 3rem;
       padding: 0 1rem;
     }
+
     footer.footer {
+      background-color: #2563eb;
+      color: white;
       text-align: center;
       padding: 1rem 0;
-      background: #2980b9;
-      color: white;
-      font-weight: 600;
       font-size: 0.9rem;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+      font-weight: 500;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
     }
-    
-    /* Responsive Nav simple */
-    @media (max-width: 600px) {
-      nav.nav-principal {
+
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .nav-principal {
+        justify-content: center;
+      }
+
+      .logo {
         justify-content: center;
       }
     }
   </style>
-  
 </head>
+
 <body>
   <header class="header-principal" role="banner">
-    <h1>PlanFinder</h1>
-    <nav class="nav-principal" role="navigation" aria-label="Menú principal">
-      <a href="{{ url_for('main.home') }}" class="{% if request.endpoint == 'main.home' %}active{% endif %}">Inicio</a>
-      <a href="{{ url_for('planes.listar') }}" class="{% if request.endpoint.startswith('planes.') %}active{% endif %}">Planes</a>
-      <a href="{{ url_for('favoritos.listar') }}" class="{% if request.endpoint.startswith('favoritos.') %}active{% endif %}">Favoritos</a>
+    <div class="navbar">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="PlanFinder Logo">
+        <span>PlanFinder <span class="tag">Temporal</span></span>
+      </div>
+      <nav class="nav-principal" role="navigation" aria-label="Menú principal">
+        <a href="{{ url_for('main.home') }}">Inicio</a>
+        <a href="{{ url_for('planes.listar') }}">Planes</a>
+        <a href="{{ url_for('favoritos.listar') }}">Favoritos</a>
 
-      {% if session.get('usuario_id') %}
-        <a href="{{ url_for('usuarios.perfil') }}" class="{% if request.endpoint.startswith('usuarios.') %}active{% endif %}">Mi Perfil</a>
-        <a href="{{ url_for('auth.logout') }}">Cerrar Sesión</a>
-      {% else %}
-        <a href="{{ url_for('auth.login') }}" class="{% if request.endpoint == 'auth.login' %}active{% endif %}">Iniciar Sesión</a>
-      {% endif %}
-    </nav>
+        {% if session.get('usuario_id') %}
+          <a href="{{ url_for('usuarios.perfil') }}">Perfil</a>
+          <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}">Iniciar sesión</a>
+        {% endif %}
+      </nav>
+    </div>
   </header>
-  
+
   <main role="main">
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -133,10 +164,10 @@
         </ul>
       {% endif %}
     {% endwith %}
-    
+
     {% block content %}{% endblock %}
   </main>
-  
+
   <footer class="footer" role="contentinfo">
     <p>&copy; 2025 PlanFinder. Todos los derechos reservados.</p>
   </footer>

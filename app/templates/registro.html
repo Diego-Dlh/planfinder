@@ -1,20 +1,160 @@
 <!-- registro.html -->
-{% extends "base.html" %}
-{% block title %}Registro{% endblock %}
+
 {% block content %}
-<div class="formulario-contenedor">
-  <h2>Registro de Usuario</h2>
-  <form method="POST" class="formulario-estilizado">
-      <label for="nombre">Nombre:</label>
-      <input type="text" name="nombre" id="nombre" required>
-      <label for="email">Email:</label>
-      <input type="email" name="email" id="email" required>
-      <label for="contrasena">Contraseña:</label>
-      <input type="password" name="contrasena" id="contrasena" required>
-      <button type="submit">Registrarse</button>
-  </form>
-  <p style="text-align:center; margin-top: 1rem;">
-    <a href="{{ url_for('auth.login') }}" class="enlace-simple">¿Ya tienes cuenta?</a>
-  </p>
+<style>
+  .register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    background-color: #f5f7fa;
+  }
+
+  .register-box {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .register-box h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+  }
+
+  .register-box label {
+    display: block;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
+  .register-box input[type="text"],
+  .register-box input[type="email"],
+  .register-box input[type="password"] {
+    width: 100%;
+    padding: 0.6rem;
+    margin-bottom: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background-color: #f3f4f6;
+  }
+
+  .register-box .terms {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 0.85rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .register-box .terms input {
+    margin-right: 0.5rem;
+  }
+
+  .register-box button {
+    width: 100%;
+    padding: 0.6rem;
+    background-color: #2563eb;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .register-box button:hover {
+    background-color: #1d4ed8;
+  }
+
+  .divider {
+    margin: 1.5rem 0 1rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .social-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .social-btn {
+    flex: 1;
+    border: 1px solid #2563eb;
+    padding: 0.5rem;
+    border-radius: 4px;
+    color: #2563eb;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    text-decoration: none;
+  }
+
+  .social-btn img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .login-link {
+    font-size: 0.9rem;
+  }
+
+  .login-link a {
+    color: #2563eb;
+    text-decoration: none;
+  }
+
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<div class="register-container">
+  <div class="register-box">
+    <h2>Registro</h2>
+    <form method="POST">
+      <label for="nombre">Usuario</label>
+      <input type="text" name="nombre" id="nombre" placeholder="nombre" required>
+
+      <label for="email">Email</label>
+      <input type="email" name="email" id="email" placeholder="correo@correo.com" required>
+
+      <label for="contrasena">contraseña</label>
+      <input type="password" name="contrasena" id="contrasena" placeholder="********" required>
+
+      <div class="terms">
+        <input type="checkbox" id="terminos" required>
+        <label for="terminos">Acepto términos y condiciones</label>
+      </div>
+
+      <button type="submit">Registrarme</button>
+    </form>
+
+    <div class="divider"></div>
+
+    <p style="font-size: 0.85rem; margin-bottom: 0.5rem;">o registrarme con</p>
+
+    <div class="social-buttons">
+      <a href="#" class="social-btn">
+        <img src="{{ url_for('static', filename='img/google-icon.png') }}" alt="Google">
+        Google
+      </a>
+      <a href="#" class="social-btn">
+        <img src="{{ url_for('static', filename='img/apple-icon.png') }}" alt="Apple">
+        Apple
+      </a>
+    </div>
+
+    <p class="login-link">
+      <a href="{{ url_for('auth.login') }}">Ya tengo una cuenta</a>
+    </p>
+  </div>
 </div>
 {% endblock %}

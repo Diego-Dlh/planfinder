@@ -6,21 +6,17 @@ from app.models.ubicacion import Ubicacion
 from app.models.plan import PlanTuristico
 
 bp = Blueprint('main', __name__)
+from app.services.resenas import obtener_resenas_aleatorias
 
 @bp.route('/')
 def home():
     usuario_id = session.get('usuario_id')
-
-    # Captura de filtros desde la URL
     categoria_id = request.args.get('categoria_id')
     ubicacion_id = request.args.get('ubicacion_id')
     precio_min = request.args.get('precio_min')
     precio_max = request.args.get('precio_max')
-    imagenes = request.args.get('imagenes')
 
-    # Query base
     query = PlanTuristico.query
-
     if categoria_id:
         query = query.filter_by(categoria_id=categoria_id)
     if ubicacion_id:
@@ -29,18 +25,17 @@ def home():
         query = query.filter(PlanTuristico.precio >= float(precio_min))
     if precio_max:
         query = query.filter(PlanTuristico.precio <= float(precio_max))
-    if imagenes:
-        query = query.filter(PlanTuristico.imagenes.any())
 
     planes = query.all()
-
     categorias = Categoria.query.all()
     ubicaciones = Ubicacion.query.all()
+    resenas_aleatorias = obtener_resenas_aleatorias(3)  # esta función debes crearla
 
     return render_template(
         'home.html',
         planes=planes,
         usuario_id=usuario_id,
         categorias=categorias,
-        ubicaciones=ubicaciones
+        ubicaciones=ubicaciones,
+        resenas_aleatorias=resenas_aleatorias
     )

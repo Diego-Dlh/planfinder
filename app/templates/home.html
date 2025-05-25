@@ -2,276 +2,266 @@
 {% block title %}Inicio{% endblock %}
 
 {% block content %}
-<section class="bienvenida">
-  <h2>Explora tus próximas aventuras</h2>
-  <p>Descubre y reserva planes turísticos increíbles según tus gustos y presupuesto.</p>
+<!-- Hero principal -->
+<section class="hero">
+  <div class="contenido">
+    <h1>Descubre, Explora y Vive Santa Marta como Nunca Antes 🌴</h1>
+    <p>
+      Descubre los mejores planes y experiencias en Santa Marta con nuestra plataforma. Encuentra recomendaciones personalizadas, explora actividades según tus intereses y accede a reseñas de otros viajeros.
+    </p>
+    <a href="{{ url_for('planes.listar') }}" class="btn btn-hero">Explora ahora tus planes</a>
+  </div>
 </section>
 
-<section class="filtro-container">
-  <h3>Filtrar planes turísticos</h3>
-  <form method="get" class="formulario-filtros" aria-label="Formulario de filtros de planes turísticos">
-    <div class="campo">
-      <label for="categoria_id">Categoría:</label>
-      <select name="categoria_id" id="categoria_id">
-        <option value="">Todas</option>
-        {% for cat in categorias %}
-          <option value="{{ cat.id }}" {% if request.args.get('categoria_id') == cat.id|string %}selected{% endif %}>{{ cat.nombre }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div class="campo">
-      <label for="ubicacion_id">Ubicación:</label>
-      <select name="ubicacion_id" id="ubicacion_id">
-        <option value="">Todas</option>
-        {% for u in ubicaciones %}
-          <option value="{{ u.id }}" {% if request.args.get('ubicacion_id') == u.id|string %}selected{% endif %}>{{ u.nombre }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div class="campo">
-      <label for="precio_min">Precio mínimo:</label>
-      <input type="number" name="precio_min" id="precio_min" step="0.01" min="0" value="{{ request.args.get('precio_min', '') }}" placeholder="0.00" />
-    </div>
-
-    <div class="campo">
-      <label for="precio_max">Precio máximo:</label>
-      <input type="number" name="precio_max" id="precio_max" step="0.01" min="0" value="{{ request.args.get('precio_max', '') }}" placeholder="0.00" />
-    </div>
-
-    <button type="submit" class="btn-filtrar">Buscar</button>
-  </form>
+<!-- Estadísticas -->
+<section class="estadisticas">
+  <h2>Descubre Santa Marta con Nosotros</h2>
+  <p>Explora las mejores experiencias, actividades y gastronomía en la ciudad. Nuestra plataforma conecta turistas con los mejores planes y recomendaciones locales.</p>
+  <div class="grid-estadisticas">
+    <div><strong>500+</strong><br/>Viajeros Felices</div>
+    <div><strong>700+</strong><br/>Experiencias y Actividades</div>
+    <div><strong>300+</strong><br/>Restaurantes Recomendados</div>
+  </div>
 </section>
 
-<section class="planes-encontrados">
-  <h3>Planes disponibles</h3>
+<!-- Lugares destacados -->
+<section class="destacados">
+  <div class="galeria-playa">
+    <img src="{{ url_for('static', filename='img/playa-tayrona.png') }}" alt="Playa Tayrona" />
+    <ul class="info-playa">
+      <li>📍 Parque Tayrona – Playas vírgenes, selva y biodiversidad. Ideal para senderismo y conexión con la naturaleza.</li>
+      <li>📍 Playa Cristal – Una de las playas más hermosas de Santa Marta, perfecta para buceo y snorkel.</li>
+      <li>📍 Cabo San Juan – Playas con aguas cristalinas rodeadas de palmas y grandes rocas.</li>
+      <li>📍 Minca – Un paraíso ecológico con cascadas, avistamiento de aves y vistas impresionantes de la Sierra Nevada.</li>
+    </ul>
+  </div>
+</section>
 
-  {% if planes %}
-  <div class="grid-planes" role="list">
-    {% for plan in planes %}
-    <article class="tarjeta-plan" role="listitem">
-      <figure class="imagen-plan">
-        {% if plan.imagenes|length > 0 %}
-          <img src="{{ plan.imagenes[0].url }}" alt="Imagen del plan {{ plan.nombre }}" loading="lazy" />
-        {% else %}
-          <img src="{{ url_for('static', filename='img/default.jpg') }}" alt="Imagen por defecto" loading="lazy" />
-        {% endif %}
-      </figure>
+<!-- Bloques explicativos -->
+<section class="bloques-lugares">
+  <div class="bloque">
+    <div class="texto">
+      <h2>Descubre los mejores lugares de Santa Marta</h2>
+      <p>
+        Santa Marta es un destino lleno de historia, cultura y paisajes impresionantes. Desde sus playas paradisíacas hasta su vibrante vida urbana, cada rincón tiene algo especial que ofrecer.
+      </p>
+    </div>
+    <img src="{{ url_for('static', filename='img/centrohistorico.png') }}" alt="Centro histórico" />
+  </div>
 
-      <div class="info-plan">
-        <h4>{{ plan.nombre }}</h4>
-        <p class="precio">${{ "%.2f"|format(plan.precio) }}</p>
-        <p class="descripcion-corta">{{ plan.descripcion[:120] }}{% if plan.descripcion|length > 120 %}...{% endif %}</p>
-        <div class="acciones">
-          <a href="{{ url_for('planes.detalle', plan_id=plan.id) }}" class="btn btn-detalles">Ver detalles</a>
-          {% if usuario_id %}
-          <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn btn-secundario">Favorito</a>
-          <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn btn-secundario">Reseñas</a>
-          {% endif %}
-        </div>
-      </div>
-    </article>
+  <div class="bloque invertido">
+    <img src="{{ url_for('static', filename='img/lugares-santa-marta.png') }}" alt="Playa escondida" />
+    <div class="texto">
+      <h2>Vive experiencias únicas en cada rincón</h2>
+      <p>
+        Más allá de los destinos turísticos tradicionales, Santa Marta te invita a descubrir su esencia a través de experiencias auténticas. Conoce su gastronomía local, sumérgete en su cultura ancestral y explora sus rutas ecológicas.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Carrusel de testimonios -->
+<section class="testimonios">
+  <h2>Testimonios</h2>
+  <div class="carrusel-testimonios">
+    {% for r in testimonios %}
+    <div class="testimonio">
+      <p>"{{ r.comentario }}"</p>
+      <div class="autor">{{ r.usuario_nombre }}</div>
+      <div class="estrellas">{{ "%.1f"|format(r.calificacion) }} ⭐</div>
+    </div>
     {% endfor %}
   </div>
-  {% else %}
-  <p class="sin-resultados">No se encontraron planes con los filtros seleccionados.</p>
-  {% endif %}
 </section>
 
+<!-- Próximamente -->
+<section class="proximamente">
+  <div class="contenido">
+    <h2>Próximamente para iOS y Android</h2>
+    <div class="botones-app">
+      <a href="#" class="btn-store">AppStore</a>
+      <a href="#" class="btn-store secundario">PlayStore</a>
+    </div>
+  </div>
+  <img src="{{ url_for('static', filename='img/phone-preview.png') }}" alt="Preview App">
+</section>
 
 <style>
-.bienvenida {
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #f4f7fa 0%, #e5ecf6 100%);
   text-align: center;
-  margin: 2rem 0 3rem;
-  color: #34495e;
+  padding: 4rem 2rem;
 }
-.bienvenida h2 {
-  font-size: 2.2rem;
-  margin-bottom: 0.5rem;
+.hero h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #111827;
 }
-.bienvenida p {
-  font-size: 1.1rem;
+.hero p {
   max-width: 600px;
-  margin: 0 auto;
-  color: #566374;
+  margin: 1rem auto 2rem;
+  color: #4b5563;
 }
-
-.filtro-container {
-  max-width: 900px;
-  margin: 0 auto 3rem;
-  padding: 1rem;
-  background-color: #f0f4f8;
+.btn-hero {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.75rem 2rem;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+.btn-hero:hover {
+  background-color: #1d4ed8;
 }
 
-.formulario-filtros {
+/* ESTADÍSTICAS */
+.estadisticas {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+.grid-estadisticas {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+.grid-estadisticas div {
+  font-size: 1.1rem;
+  color: #374151;
+}
+.grid-estadisticas strong {
+  font-size: 2rem;
+  color: #2563eb;
+}
+
+/* DESTACADOS */
+.destacados {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1rem;
+}
+.galeria-playa {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.2rem;
-  justify-content: center;
+  gap: 2rem;
+  align-items: center;
+  max-width: 1000px;
 }
-
-.campo {
-  display: flex;
-  flex-direction: column;
-  min-width: 160px;
-  max-width: 220px;
+.galeria-playa img {
+  flex: 1 1 400px;
+  max-width: 480px;
+  border-radius: 10px;
 }
-
-.campo label {
-  margin-bottom: 0.4rem;
-  font-weight: 600;
-  color: #34495e;
-}
-
-.campo select,
-.campo input[type="number"] {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  transition: border-color 0.2s ease;
-}
-
-.campo select:focus,
-.campo input[type="number"]:focus {
-  outline: none;
-  border-color: #2980b9;
-}
-
-.btn-filtrar {
-  background-color: #2980b9;
-  color: white;
-  font-weight: 700;
-  border: none;
-  padding: 0.7rem 1.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  align-self: center;
-  transition: background-color 0.3s ease;
-}
-
-.btn-filtrar:hover,
-.btn-filtrar:focus {
-  background-color: #1f6391;
-}
-
-.planes-encontrados {
-  max-width: 960px;
-  margin: 0 auto 4rem;
-}
-
-.grid-planes {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.8rem;
-}
-
-.tarjeta-plan {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transition: transform 0.3s ease;
-}
-
-.tarjeta-plan:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 15px rgb(0 0 0 / 0.15);
-}
-
-.imagen-plan img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-}
-
-.info-plan {
-  padding: 1rem 1.2rem;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.info-plan h4 {
-  margin: 0 0 0.5rem;
-  color: #2c3e50;
-}
-
-.precio {
-  font-weight: 700;
-  color: #2980b9;
-  margin-bottom: 0.6rem;
-}
-
-.descripcion-corta {
-  flex-grow: 1;
-  color: #555;
+.info-playa {
+  flex: 1 1 300px;
+  list-style: none;
+  padding: 0;
   font-size: 0.95rem;
+  color: #4b5563;
+}
+
+/* BLOQUES */
+.bloques-lugares {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding: 4rem 2rem;
+}
+.bloque {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: center;
+}
+.bloque.invertido {
+  flex-direction: row-reverse;
+}
+.bloque img {
+  flex: 1 1 300px;
+  max-width: 500px;
+  border-radius: 10px;
+}
+.bloque .texto {
+  flex: 1 1 300px;
+  color: #1f2937;
+}
+.bloque h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.75rem;
+}
+
+/* TESTIMONIOS */
+.testimonios {
+  background: #f9fafb;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+.carrusel-testimonios {
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  margin-top: 2rem;
+}
+.testimonio {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 1.5rem;
+  min-width: 280px;
+  max-width: 320px;
+  flex: 0 0 auto;
+}
+.testimonio p {
+  font-style: italic;
+  color: #374151;
+}
+.testimonio .autor {
+  margin-top: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+.testimonio .estrellas {
+  color: #f59e0b;
+}
+
+/* PRÓXIMAMENTE */
+.proximamente {
+  background: #f3f4f6;
+  padding: 4rem 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.proximamente .contenido {
+  flex: 1 1 300px;
+}
+.proximamente h2 {
+  font-size: 1.8rem;
   margin-bottom: 1rem;
 }
-
-.acciones {
+.botones-app {
   display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
+  gap: 1rem;
 }
-
-.btn {
-  padding: 0.5rem 1rem;
-  font-weight: 600;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
+.btn-store {
+  background: #2563eb;
   color: white;
-  transition: background-color 0.25s ease;
-  user-select: none;
-  display: inline-block;
+  padding: 0.6rem 1.4rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
 }
-
-.btn-detalles {
-  background-color: #27ae60;
+.btn-store.secundario {
+  background: white;
+  border: 2px solid #2563eb;
+  color: #2563eb;
 }
-
-.btn-detalles:hover,
-.btn-detalles:focus {
-  background-color: #1e8449;
-}
-
-.btn-secundario {
-  background-color: #2980b9;
-}
-
-.btn-secundario:hover,
-.btn-secundario:focus {
-  background-color: #1f6391;
-}
-
-.sin-resultados {
-  text-align: center;
-  color: #777;
-  font-size: 1.1rem;
-  margin-top: 3rem;
-}
-
-@media (max-width: 600px) {
-  .formulario-filtros {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .campo {
-    max-width: 100%;
-  }
-  .acciones {
-    justify-content: center;
-  }
+.proximamente img {
+  max-width: 200px;
 }
 </style>
 {% endblock %}
