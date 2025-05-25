@@ -294,3 +294,48 @@ form button:hover {
 .estrellas label:hover ~ label {
   color: #facc15;
 }
+
+.grid-planes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding-top: 2rem;
+}
+
+.card-plan {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.card-plan:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.img-container {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.nombre-plan {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  padding: 1rem;
+  text-align: left;
+}

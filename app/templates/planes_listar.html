@@ -1,302 +1,198 @@
-<!-- planes listar -->
 {% extends "base.html" %}
 {% block title %}Planes Disponibles{% endblock %}
 
 {% block content %}
-<section class="planes-encontrados">
-  <h2 class="titulo-principal">Planes Turísticos</h2>
+<section class="planes-listar">
+  <div class="encabezado-planes">
+    <h1>Explora los mejores planes en Santa Marta</h1>
+    <p>Filtra por zona, categoría o presupuesto para encontrar tu próxima aventura.</p>
+  </div>
 
-  <section class="filtro-container">
-    <h3>Filtrar Planes Turísticos</h3>
-    <form method="get" class="formulario-filtros" aria-label="Formulario de filtros de planes turísticos">
+  <form method="get" class="barra-filtros">
+    <div class="filtros">
       <div class="campo">
-        <label for="categoria_id">Categoría</label>
-        <select name="categoria_id" id="categoria_id" class="select-filtro">
-          <option value="">Todas</option>
+        <select name="categoria_id">
+          <option value="">Categoría</option>
           {% for cat in categorias %}
             <option value="{{ cat.id }}" {% if request.args.get('categoria_id') == cat.id|string %}selected{% endif %}>{{ cat.nombre }}</option>
           {% endfor %}
         </select>
       </div>
-
       <div class="campo">
-        <label for="ubicacion_id">Ubicación</label>
-        <select name="ubicacion_id" id="ubicacion_id" class="select-filtro">
-          <option value="">Todas</option>
+        <select name="ubicacion_id">
+          <option value="">Ubicación</option>
           {% for u in ubicaciones %}
             <option value="{{ u.id }}" {% if request.args.get('ubicacion_id') == u.id|string %}selected{% endif %}>{{ u.nombre }}</option>
           {% endfor %}
         </select>
       </div>
-
-      <div class="campo rango-precio">
-        <label for="precio_min">Precio mínimo</label>
-        <input type="number" name="precio_min" id="precio_min" min="0" step="0.01" value="{{ request.args.get('precio_min', '') }}" placeholder="0.00" />
+      <div class="campo">
+        <input type="number" name="precio_min" placeholder="Mínimo" value="{{ request.args.get('precio_min', '') }}">
       </div>
-
-      <div class="campo rango-precio">
-        <label for="precio_max">Precio máximo</label>
-        <input type="number" name="precio_max" id="precio_max" min="0" step="0.01" value="{{ request.args.get('precio_max', '') }}" placeholder="0.00" />
+      <div class="campo">
+        <input type="number" name="precio_max" placeholder="Máximo" value="{{ request.args.get('precio_max', '') }}">
       </div>
-
-      <button type="submit" class="btn-filtrar">Buscar</button>
-    </form>
-  </section>
+      <button type="submit">Aplicar</button>
+    </div>
+  </form>
 
   {% if planes %}
-  <div class="grid-planes" role="list">
+  <div class="grid-planes">
     {% for plan in planes %}
-    <article class="tarjeta-plan" role="listitem">
-      {% if plan.imagenes|length > 0 %}
-      <figure class="imagen-plan">
-        <img src="{{ plan.imagenes[0].url }}" alt="Imagen del plan {{ plan.nombre }}" loading="lazy" />
-      </figure>
-      {% else %}
-      <figure class="imagen-plan">
-        <img src="{{ url_for('static', filename='img/default.jpg') }}" alt="Imagen por defecto" loading="lazy" />
-      </figure>
-      {% endif %}
-      <div class="info-plan">
+    <div class="tarjeta-plan">
+      <div class="imagen">
+        {% if plan.imagenes|length > 0 %}
+          <img src="{{ plan.imagenes[0].url }}" alt="{{ plan.nombre }}">
+        {% else %}
+          <img src="{{ url_for('static', filename='img/default.jpg') }}" alt="Sin imagen">
+        {% endif %}
+      </div>
+      <div class="contenido">
         <h3>{{ plan.nombre }}</h3>
-        <p class="descripcion-corta">{{ plan.descripcion[:150] }}{% if plan.descripcion|length > 150 %}...{% endif %}</p>
-        <p class="precio">${{ "%.2f"|format(plan.precio) }}</p>
+        <p>{{ plan.descripcion[:120] }}{% if plan.descripcion|length > 120 %}...{% endif %}</p>
+        <div class="info-extra">
+          <span class="precio">${{ "{:,.0f}".format(plan.precio)|replace(",", ".") }}</span>
+        </div>
         <div class="acciones">
-          <a href="{{ url_for('planes.detalle', plan_id=plan.id) }}" class="btn btn-detalles">Ver Detalles</a>
-          <a href="{{ url_for('resenas.reseñar', plan_id=plan.id) }}" class="btn btn-secundario">Reseñas</a>
-          <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn btn-secundario">Favorito</a>
+          <a href="{{ url_for('planes.detalle', plan_id=plan.id) }}" class="btn">Ver más</a>
         </div>
       </div>
-    </article>
+    </div>
     {% endfor %}
   </div>
   {% else %}
-  <p class="sin-resultados">No hay planes turísticos disponibles en este momento.</p>
+    <p class="mensaje-vacio">No se encontraron resultados con los filtros aplicados.</p>
   {% endif %}
-
-  <div class="crear-plan">
-    <a href="{{ url_for('planes.nuevo') }}" class="btn btn-detalles">Crear nuevo plan</a>
-  </div>
 </section>
 
 <style>
-.planes-encontrados {
-  max-width: 1000px;
-  margin: 2rem auto 4rem;
-  padding: 0 1rem;
+.planes-listar {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
 }
-
-.titulo-principal {
-  font-size: 2.5rem;
+.encabezado-planes h1 {
+  font-size: 2.2rem;
   font-weight: 700;
-  color: #2c3e50;
-  text-align: center;
-  margin-bottom: 1.5rem;
+  color: #1f2937;
+}
+.encabezado-planes p {
+  color: #4b5563;
+  margin-bottom: 2rem;
 }
 
-.filtro-container {
-  background-color: #f7f9fc;
-  padding: 1.5rem 2rem;
+/* Barra de filtros moderna */
+.barra-filtros {
+  background-color: #f3f4f6;
+  padding: 1rem 1.5rem;
   border-radius: 10px;
-  box-shadow: 0 3px 10px rgb(0 0 0 / 0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   margin-bottom: 2.5rem;
+}
+.filtros {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
-
-.formulario-filtros {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 900px;
-}
-
-.campo {
-  display: flex;
-  flex-direction: column;
-  min-width: 180px;
-  max-width: 240px;
-}
-
-.campo label {
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-  color: #34495e;
-  font-size: 1rem;
-}
-
-.select-filtro, input[type="number"] {
+.filtros .campo select,
+.filtros .campo input {
   padding: 0.6rem 1rem;
-  font-size: 1rem;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
-  border: 1.5px solid #d0d7de;
   background-color: #fff;
-  transition: border-color 0.3s ease;
+  font-size: 0.95rem;
+  width: 160px;
 }
-
-.select-filtro:focus, input[type="number"]:focus {
-  outline: none;
-  border-color: #3a80e9;
-}
-
-.rango-precio {
-  max-width: 180px;
-}
-
-.btn-filtrar {
-  background-color: #3a80e9;
+.filtros button {
+  background-color: #2563eb;
   color: white;
-  font-weight: 700;
+  font-weight: 600;
+  padding: 0.6rem 1.4rem;
   border: none;
-  padding: 0.85rem 3rem;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 1.1rem;
-  transition: background-color 0.3s ease;
-  flex-shrink: 0;
-  user-select: none;
-  align-self: center;
 }
-
-.btn-filtrar:hover,
-.btn-filtrar:focus {
-  background-color: #2b61c2;
+.filtros button:hover {
+  background-color: #1e40af;
 }
 
 .grid-planes {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
 }
-
 .tarjeta-plan {
-  background-color: white;
+  background: white;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgb(0 0 0 / 0.12);
   overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease;
-  cursor: pointer;
 }
-
 .tarjeta-plan:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgb(0 0 0 / 0.18);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
 }
-
-.imagen-plan img {
+.tarjeta-plan .imagen img {
   width: 100%;
-  height: 180px;
+  height: 200px;
   object-fit: cover;
-  border-bottom: 1px solid #ddd;
 }
-
-.info-plan {
-  padding: 1rem 1.4rem 1.6rem;
-  flex-grow: 1;
+.tarjeta-plan .contenido {
+  padding: 1rem 1.2rem 1.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-}
-
-.info-plan h3 {
-  margin: 0 0 0.8rem;
-  color: #222;
-  font-size: 1.3rem;
-}
-
-.descripcion-corta {
-  color: #555;
-  font-size: 1rem;
-  margin-bottom: 1rem;
   flex-grow: 1;
-  line-height: 1.4;
 }
-
-.precio {
-  color: #2c7be5;
-  font-weight: 700;
+.tarjeta-plan h3 {
   font-size: 1.2rem;
-  margin-bottom: 1rem;
-}
-
-.acciones {
-  display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-}
-
-.btn {
-  padding: 0.6rem 1.4rem;
   font-weight: 700;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  text-align: center;
+  color: #1f2937;
+  margin-bottom: 0.6rem;
+}
+.tarjeta-plan p {
+  color: #4b5563;
+  font-size: 0.95rem;
+  flex-grow: 1;
+}
+.info-extra {
+  margin-top: 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2563eb;
+}
+.acciones {
+  margin-top: 1rem;
+}
+.acciones .btn {
+  background-color: #2563eb;
   color: white;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
   text-decoration: none;
-  user-select: none;
-  transition: background-color 0.25s ease;
-  font-size: 1rem;
+  font-weight: 600;
   display: inline-block;
 }
-
-.btn-detalles {
-  background-color: #1e88e5;
+.acciones .btn:hover {
+  background-color: #1e40af;
 }
-
-.btn-detalles:hover,
-.btn-detalles:focus {
-  background-color: #1669bb;
-}
-
-.btn-secundario {
-  background-color: #6f7a8a;
-}
-
-.btn-secundario:hover,
-.btn-secundario:focus {
-  background-color: #4a5160;
-}
-
-.sin-resultados {
+.mensaje-vacio {
   text-align: center;
-  color: #999;
-  font-size: 1.15rem;
-  margin-top: 4rem;
-}
-
-.crear-plan {
-  text-align: center;
+  color: #6b7280;
+  font-size: 1.1rem;
   margin-top: 3rem;
-}
-
-.crear-plan .btn-detalles {
-  padding: 0.8rem 3rem;
-  font-size: 1.2rem;
 }
 
 /* Responsive */
 @media (max-width: 600px) {
-  .filtro-container {
+  .filtros {
     flex-direction: column;
-    padding: 1rem;
+    align-items: stretch;
   }
-  .campo {
-    max-width: 100%;
-  }
-  .acciones {
-    justify-content: center;
-  }
-  .tarjeta-plan {
-    height: auto;
-  }
-  .descripcion-corta {
-    font-size: 0.95rem;
+  .filtros .campo {
+    width: 100%;
   }
 }
 </style>

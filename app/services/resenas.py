@@ -50,6 +50,20 @@ from app.models.resena import Resena
 import random
 
 def obtener_resenas_aleatorias(n=3):
-    todas = Resena.query.all()
-    return random.sample(todas, min(n, len(todas)))
+    # Hacemos JOIN con Usuario y seleccionamos todo desde Resena y nombre del usuario
+    resenas_con_usuarios = (
+        db.session.query(Resena, Usuario.nombre)
+        .join(Usuario, Resena.usuario_id == Usuario.id)
+        .all()
+    )
 
+    seleccionadas = random.sample(resenas_con_usuarios, min(n, len(resenas_con_usuarios)))
+
+    return [
+        {
+            "comentario": r.comentario,
+            "calificacion": r.calificacion,
+            "usuario_nombre": nombre
+        }
+        for r, nombre in seleccionadas
+    ]

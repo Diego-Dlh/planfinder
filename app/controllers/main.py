@@ -1,5 +1,4 @@
 # app/controllers/main.py
-
 from flask import Blueprint, render_template, request, session
 from app.models.categoria import Categoria
 from app.models.ubicacion import Ubicacion
@@ -29,7 +28,7 @@ def home():
     planes = query.all()
     categorias = Categoria.query.all()
     ubicaciones = Ubicacion.query.all()
-    resenas_aleatorias = obtener_resenas_aleatorias(3)  # esta función debes crearla
+    testimonios = obtener_resenas_aleatorias(3)  # esta función debes crearla
 
     return render_template(
         'home.html',
@@ -37,5 +36,5 @@ def home():
         usuario_id=usuario_id,
         categorias=categorias,
         ubicaciones=ubicaciones,
-        resenas_aleatorias=resenas_aleatorias
+        testimonios=testimonios
     )
