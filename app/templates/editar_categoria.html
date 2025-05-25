@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Editar Categoría{% endblock %}
+
+{% block content %}
+<section class="formulario-categoria">
+  <h2>✏️ Editar Categoría</h2>
+
+  <form action="{{ url_for('categorias.editar', categoria_id=categoria.id) }}" method="POST">
+    <div class="campo">
+      <label for="nombre_categoria">Nuevo nombre:</label>
+      <input type="text" id="nombre_categoria" name="nombre_categoria" value="{{ categoria.nombre }}" required />
+    </div>
+
+    <div class="acciones">
+      <button type="submit" class="btn btn-guardar">Guardar Cambios</button>
+      <a href="{{ url_for('categorias.index') }}" class="btn btn-cancelar">Cancelar</a>
+    </div>
+  </form>
+</section>
+
+<style>
+.formulario-categoria {
+  max-width: 500px;
+  margin: 3rem auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Inter, sans-serif;
+}
+
+.formulario-categoria h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.campo {
+  margin-bottom: 1.5rem;
+}
+
+.campo label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.campo input[type="text"] {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #f9fafb;
+}
+
+.acciones {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  text-decoration: none;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-guardar {
+  background-color: #2563eb;
+}
+.btn-guardar:hover {
+  background-color: #1e40af;
+}
+
+.btn-cancelar {
+  background-color: #9ca3af;
+}
+.btn-cancelar:hover {
+  background-color: #6b7280;
+}
+</style>
+{% endblock %}

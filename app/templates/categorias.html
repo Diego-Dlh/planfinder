@@ -1,94 +1,129 @@
-{% extends "base.html" %}
+{% extends "base.html" %} 
 {% block title %}Categorías{% endblock %}
+
 {% block content %}
-<section class="categorias-container">
+<section class="categorias-admin">
   <h2>Categorías Disponibles</h2>
-  
+
+  <div class="acciones-superiores">
+    <a href="{{ url_for('categorias.crear') }}" class="btn btn-crear">➕ Nueva categoría</a>
+  </div>
+
   {% if categorias %}
-    <div class="grid-categorias">
-      {% for c in categorias %}
-      <div class="categoria-card">
-        <h3 class="categoria-nombre">{{ c.nombre }}</h3>
-        <p class="categoria-descripcion">{{ c.descripcion }}</p>
-        <a href="{{ url_for('planes.listar', categoria_id=c.id) }}" class="btn btn-detalles">Ver Planes</a>
-      </div>
+  <table class="tabla-categorias">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cat in categorias %}
+      <tr>
+        <td>{{ cat.id }}</td>
+        <td>{{ cat.nombre }}</td>
+        <td style="display: flex; gap: 0.5rem;">
+          <a href="{{ url_for('categorias.editar', categoria_id=cat.id) }}" class="btn btn-editar">✏️ Editar</a>
+          <form action="{{ url_for('categorias.eliminar', categoria_id=cat.id) }}" method="POST" onsubmit="return confirm('¿Eliminar esta categoría?')" style="display:inline;">
+            <button type="submit" class="btn btn-eliminar">🗑 Eliminar</button>
+          </form>
+        </td>
+      </tr>
       {% endfor %}
-    </div>
+    </tbody>
+  </table>
   {% else %}
-    <p>No hay categorías disponibles en este momento.</p>
+    <p class="sin-categorias">No hay categorías registradas aún.</p>
   {% endif %}
 </section>
 
 <style>
-.categorias-container {
+.categorias-admin {
   max-width: 900px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  margin: 3rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  font-family: 'Segoe UI', Inter, sans-serif;
 }
 
-h2 {
-  font-size: 2rem;
+.categorias-admin h2 {
+  font-size: 1.8rem;
   font-weight: 700;
-  text-align: center;
+  color: #1f2937;
   margin-bottom: 1.5rem;
-  color: #34495e;
+  text-align: center;
 }
 
-.grid-categorias {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+.acciones-superiores {
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
-.categoria-card {
-  background-color: #f7f9fc;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.categoria-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.categoria-nombre {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-}
-
-.categoria-descripcion {
-  color: #7f8c8d;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-
-.btn-detalles {
+.btn {
   display: inline-block;
   padding: 0.6rem 1.2rem;
-  background-color: #2980b9;
-  color: white;
   font-weight: 600;
+  font-size: 0.95rem;
   border-radius: 6px;
   text-decoration: none;
+  color: white;
+  transition: background 0.3s ease;
+  border: none;
+}
+
+.btn-crear {
+  background-color: #2563eb;
+}
+.btn-crear:hover {
+  background-color: #1e40af;
+}
+
+.btn-editar {
+  background-color: #6c63ff;
+}
+.btn-editar:hover {
+  background-color: #574fd6;
+}
+
+.btn-eliminar {
+  background-color: #ef4444;
+}
+.btn-eliminar:hover {
+  background-color: #b91c1c;
+}
+
+.tabla-categorias {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.tabla-categorias th,
+.tabla-categorias td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.tabla-categorias th {
+  background-color: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+}
+
+.tabla-categorias td {
+  color: #4b5563;
+}
+
+.sin-categorias {
   text-align: center;
-  transition: background-color 0.3s ease;
-}
-
-.btn-detalles:hover {
-  background-color: #1f6391;
-}
-
-@media (max-width: 600px) {
-  .grid-categorias {
-    grid-template-columns: 1fr; /* Una sola columna en dispositivos móviles */
-  }
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin-top: 2rem;
 }
 </style>
 {% endblock %}

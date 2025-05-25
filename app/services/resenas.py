@@ -52,3 +52,4 @@ import random
 def obtener_resenas_aleatorias(n=3):
     todas = Resena.query.all()
     return random.sample(todas, min(n, len(todas)))
+

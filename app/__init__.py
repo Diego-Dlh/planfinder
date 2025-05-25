@@ -18,7 +18,8 @@ def create_app():
     login_manager.init_app(app)
 
     # Registrar Blueprints (asegurate de tenerlos configurados)
-    from app.controllers import usuarios, planes, resenas, favoritos, auth, admin, main
+    from app.controllers import usuarios, planes, resenas, favoritos, auth, admin, main, categorias
+    app.register_blueprint(categorias.bp)
     app.register_blueprint(main.bp)
     app.register_blueprint(usuarios.bp)
     app.register_blueprint(planes.bp)

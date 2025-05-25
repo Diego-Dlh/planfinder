@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Ubicaciones{% endblock %}
+
+{% block content %}
+<section class="categorias-admin">
+  <h2>Administrar Ubicaciones</h2>
+
+  <form action="{{ url_for('admin.agregar_ubicacion_route') }}" method="POST" class="form-ubicacion-completa">
+    <input type="text" name="nombre" placeholder="Nombre de la ubicación" required />
+    <input type="text" name="direccion" placeholder="Dirección (opcional)" />
+    <input type="text" name="coordenadas" placeholder="Coordenadas: lat,lon (opcional)" />
+    <input type="text" name="tipo" placeholder="Tipo: Playa, Museo, etc. (opcional)" />
+    <button type="submit" class="btn btn-crear">➕ Agregar ubicación</button>
+  </form>
+
+  {% if ubicaciones %}
+  <table class="tabla-categorias">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Dirección</th>
+        <th>Coordenadas</th>
+        <th>Tipo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in ubicaciones %}
+      <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.nombre }}</td>
+        <td>{{ u.direccion or '—' }}</td>
+        <td>{{ u.coordenadas or '—' }}</td>
+        <td>{{ u.tipo or '—' }}</td>
+        <td>
+          <a href="{{ url_for('admin.eliminar_ubicacion_route', ubicacion_id=u.id) }}" class="btn btn-eliminar" onclick="return confirm('¿Eliminar esta ubicación?')">🗑 Eliminar</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="sin-categorias">No hay ubicaciones registradas aún.</p>
+  {% endif %}
+</section>
+
+<style>
+.categorias-admin {
+  max-width: 1000px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  font-family: 'Segoe UI', Inter, sans-serif;
+}
+
+.categorias-admin h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.form-ubicacion-completa {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  align-items: center;
+}
+
+.form-ubicacion-completa input {
+  padding: 0.6rem 0.9rem;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.btn {
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  text-decoration: none;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-crear {
+  background-color: #2563eb;
+  grid-column: span 2;
+}
+.btn-crear:hover {
+  background-color: #1e40af;
+}
+
+.btn-eliminar {
+  background-color: #ef4444;
+}
+.btn-eliminar:hover {
+  background-color: #b91c1c;
+}
+
+.tabla-categorias {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-categorias th,
+.tabla-categorias td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.tabla-categorias th {
+  background-color: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+}
+
+.tabla-categorias td {
+  color: #4b5563;
+}
+
+.sin-categorias {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin-top: 2rem;
+}
+</style>
+{% endblock %}

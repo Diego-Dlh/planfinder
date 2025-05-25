@@ -5,8 +5,10 @@
 <section style="max-width: 1100px; margin: 2rem auto;">
   <h1 style="font-size: 2rem; font-weight: 700; color: #1f2937;">📊 Administración de Planes Turísticos</h1>
 
-  <div style="margin: 1.5rem 0;">
+  <div style="margin: 1.5rem 0; display: flex; gap: 1rem; flex-wrap: wrap;">
     <a href="{{ url_for('planes.nuevo') }}" class="btn btn-detalles">+ Nuevo Plan</a>
+    <a href="{{ url_for('categorias.index') }}" class="btn btn-secundario">📂 Administrar Categorías</a>
+    <a href="{{ url_for('admin.listar_ubicaciones_route') }}" class="btn btn-secundario">📍 Administrar Ubicaciones</a>
   </div>
 
   {% if planes %}

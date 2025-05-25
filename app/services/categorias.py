@@ -1,6 +1,7 @@
 from app.models.categoria import Categoria
 from app import db
 
+
 def listar_categorias():
     return Categoria.query.all()
 
@@ -15,5 +16,13 @@ def editar_categoria(categoria_id, nuevo_nombre):
     categoria = Categoria.query.get(categoria_id)
     if categoria:
         categoria.nombre = nuevo_nombre
+        db.session.commit()
+    return categoria
+
+def eliminar_categoria(categoria_id):
+    # Eliminar una categoría existente
+    categoria = Categoria.query.get(categoria_id)
+    if categoria:
+        db.session.delete(categoria)
         db.session.commit()
     return categoria
