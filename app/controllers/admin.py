@@ -13,3 +13,4 @@ def eliminar_resena_route(resena_id):
     else:
         flash(resultado['error'], 'danger')
     return redirect(url_for('planes.listar'))
+

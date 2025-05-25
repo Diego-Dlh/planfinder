@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Editar Plan{% endblock %}
+
+{% block content %}
+<section style="max-width: 700px; margin: 2rem auto;">
+  <h2 style="font-size: 1.8rem; font-weight: 700; color: #1f2937;">✏️ Editar Plan</h2>
+
+  <form method="POST" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem;">
+    <label>Nombre:
+      <input type="text" name="nombre" value="{{ plan.nombre }}" required style="padding: 0.6rem; border: 1px solid #ccc; border-radius: 6px; width: 100%;">
+    </label>
+
+    <label>Descripción:
+      <textarea name="descripcion" required style="padding: 0.6rem; border: 1px solid #ccc; border-radius: 6px; width: 100%; min-height: 120px;">{{ plan.descripcion }}</textarea>
+    </label>
+
+    <label>Precio:
+      <input type="number" name="precio" value="{{ plan.precio }}" step="0.01" required style="padding: 0.6rem; border: 1px solid #ccc; border-radius: 6px;">
+    </label>
+
+    <label>Duración (horas):
+      <input type="number" name="duracion" value="{{ plan.duracion }}" step="0.1" required style="padding: 0.6rem; border: 1px solid #ccc; border-radius: 6px;">
+    </label>
+
+    <label>Categoría:
+      <select name="categoria_id" required style="padding: 0.6rem; border: 1px solid #ccc; border-radius: 6px;">
+        {% for cat in categorias %}
+          <option value="{{ cat.id }}" {% if cat.id == plan.categoria_id %}selected{% endif %}>{{ cat.nombre }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>Ubicación:
+      <select name="ubicacion_id" required style="padding: 0.6rem; border: 1px solid #ccc; border-radius: 6px;">
+        {% for u in ubicaciones %}
+          <option value="{{ u.id }}" {% if u.id == plan.ubicacion_id %}selected{% endif %}>{{ u.nombre }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+      <button type="submit" class="btn btn-detalles">💾 Guardar cambios</button>
+      <a href="{{ url_for('planes.agregar_imagen', plan_id=plan.id) }}" class="btn btn-secundario">🖼️ Agregar imagen</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

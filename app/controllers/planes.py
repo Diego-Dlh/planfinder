@@ -96,3 +96,43 @@ def agregar_imagen(plan_id):
         flash('Imagen agregada correctamente.', 'success')
         return redirect(url_for('planes.detalle', plan_id=plan_id))
     return render_template('agregar_imagen.html', plan_id=plan_id)
+
+# Editar un plan
+@bp.route('/<int:plan_id>/editar', methods=['GET', 'POST'])
+@admin_required
+def editar(plan_id):
+    from app.models.categoria import Categoria
+    plan = obtener_plan_por_id(plan_id)
+    categorias = Categoria.query.all()
+    ubicaciones = Ubicacion.query.all()
+    
+    if request.method == 'POST':
+        plan.nombre = request.form['nombre']
+        plan.descripcion = request.form['descripcion']
+        plan.precio = float(request.form['precio'])
+        plan.duracion = float(request.form['duracion'])
+        plan.categoria_id = request.form['categoria_id']
+        plan.ubicacion_id = request.form['ubicacion_id']
+        db.session.commit()
+        flash('Plan actualizado exitosamente', 'success')
+        return redirect(url_for('planes.dashboard_admin'))
+    
+    return render_template('editar_plan.html', plan=plan, categorias=categorias, ubicaciones=ubicaciones)
+
+# Eliminar un plan
+@bp.route('/<int:plan_id>/eliminar', methods=['POST'])
+@admin_required
+def eliminar(plan_id):
+    plan = obtener_plan_por_id(plan_id)
+    db.session.delete(plan)
+    db.session.commit()
+    flash('Plan eliminado correctamente', 'success')
+    return redirect(url_for('planes.dashboard_admin'))
+
+# Vista general del dashboard de planes (solo admins)
+@bp.route('/admin/dashboard')
+@admin_required
+def dashboard_admin():
+    from app.models.plan import PlanTuristico
+    planes = PlanTuristico.query.order_by(PlanTuristico.nombre).all()
+    return render_template('dashboard_planes.html', planes=planes)

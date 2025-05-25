@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Dashboard de Planes{% endblock %}
+
+{% block content %}
+<section style="max-width: 1100px; margin: 2rem auto;">
+  <h1 style="font-size: 2rem; font-weight: 700; color: #1f2937;">📊 Administración de Planes Turísticos</h1>
+
+  <div style="margin: 1.5rem 0;">
+    <a href="{{ url_for('planes.nuevo') }}" class="btn btn-detalles">+ Nuevo Plan</a>
+  </div>
+
+  {% if planes %}
+  <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden;">
+    <thead style="background-color: #f1f5f9; text-align: left;">
+      <tr>
+        <th style="padding: 1rem;">Nombre</th>
+        <th style="padding: 1rem;">Precio</th>
+        <th style="padding: 1rem;">Ubicación</th>
+        <th style="padding: 1rem;">Duración</th>
+        <th style="padding: 1rem;">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for plan in planes %}
+      <tr style="border-top: 1px solid #e5e7eb;">
+        <td style="padding: 1rem;">{{ plan.nombre }}</td>
+        <td style="padding: 1rem;">${{ "%.2f"|format(plan.precio) }}</td>
+        <td style="padding: 1rem;">{{ plan.ubicacion.nombre }}</td>
+        <td style="padding: 1rem;">{{ plan.duracion }}h</td>
+        <td style="padding: 1rem;">
+          <a href="{{ url_for('planes.editar', plan_id=plan.id) }}" class="btn btn-secundario">Editar</a>
+          <form action="{{ url_for('planes.eliminar', plan_id=plan.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este plan?')">
+            <button type="submit" class="btn btn-redes btn-facebook">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>No hay planes registrados.</p>
+  {% endif %}
+</section>
+{% endblock %}

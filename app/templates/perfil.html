@@ -3,211 +3,190 @@
 
 {% block content %}
 <section class="perfil-container">
-  <h2>Mi Perfil</h2>
+  <div class="perfil-header">
+    <h2>👤 Mi Perfil</h2>
+    {% if usuario.tipo.value == 'Admin' %}
+    <a href="{{ url_for('planes.dashboard_admin') }}" class="btn btn-dashboard">Panel Admin</a>
+    {% endif %}
+  </div>
 
   <form method="POST" class="formulario-estilizado" novalidate>
     <div class="grid-formulario">
       <div class="campo-formulario">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" value="{{ usuario.nombre }}" required placeholder="Tu nombre completo" autocomplete="name" />
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" name="nombre" value="{{ usuario.nombre }}" required placeholder="Tu nombre" autocomplete="name" />
       </div>
 
       <div class="campo-formulario">
-        <label for="email">Email:</label>
+        <label for="email">Correo electrónico</label>
         <input type="email" id="email" value="{{ usuario.email }}" disabled aria-disabled="true" />
       </div>
 
       <div class="campo-formulario">
-        <label for="tipo_usuario">Tipo de usuario:</label>
+        <label for="tipo_usuario">Rol de usuario</label>
         <input type="text" id="tipo_usuario" value="{{ usuario.tipo.value }}" disabled aria-disabled="true" />
       </div>
 
       <div class="campo-formulario">
-        <label for="contrasena">Nueva contraseña (opcional):</label>
-        <input type="password" id="contrasena" name="contrasena" placeholder="Nueva contraseña" autocomplete="new-password" minlength="6" />
-        <small class="ayuda">Debe tener al menos 6 caracteres.</small>
+        <label for="contrasena">Nueva contraseña (opcional)</label>
+        <input type="password" id="contrasena" name="contrasena" placeholder="******" autocomplete="new-password" minlength="6" />
+        <small class="ayuda">Mínimo 6 caracteres.</small>
       </div>
 
       <div class="campo-formulario">
-        <label for="foto_perfil">Foto de perfil (URL):</label>
-        <input type="url" id="foto_perfil" name="foto_perfil" value="{{ usuario.foto_perfil or '' }}" placeholder="https://example.com/tu-foto.jpg" />
+        <label for="foto_perfil">Foto de perfil (URL)</label>
+        <input type="url" id="foto_perfil" name="foto_perfil" value="{{ usuario.foto_perfil or '' }}" placeholder="https://..." />
       </div>
 
       {% if usuario.foto_perfil %}
       <div class="vista-previa">
         <p>Vista previa:</p>
-        <img src="{{ usuario.foto_perfil }}" alt="Foto de perfil de {{ usuario.nombre }}" width="150" loading="lazy" />
+        <img src="{{ usuario.foto_perfil }}" alt="Foto de {{ usuario.nombre }}" />
       </div>
       {% endif %}
     </div>
 
-    <button type="submit" class="btn btn-guardar">Guardar cambios</button>
+    <div class="acciones-formulario">
+      <button type="submit" class="btn btn-guardar">💾 Guardar cambios</button>
+    </div>
   </form>
 
-  <!-- Botón Cerrar Sesión -->
   <form action="{{ url_for('auth.logout') }}" method="get" class="form-cerrar-sesion">
-    <button type="submit" class="btn btn-cerrar-sesion">Cerrar sesión</button>
+    <button type="submit" class="btn btn-cerrar">🚪 Cerrar sesión</button>
   </form>
 </section>
 
 <style>
 .perfil-container {
-  max-width: 800px;
-  margin: 2rem auto 4rem;
-  padding: 2rem 2.5rem;
-  background-color: #f8f9fb;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #2c3e50;
+  max-width: 850px;
+  margin: 3rem auto;
+  padding: 2.5rem 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+  font-family: 'Segoe UI', Inter, sans-serif;
+  color: #1f2937;
 }
 
-h2 {
-  text-align: center;
+.perfil-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
-  font-weight: 700;
+}
+
+.perfil-header h2 {
   font-size: 2rem;
+  font-weight: 700;
+}
+
+.btn-dashboard {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.55rem 1.2rem;
+  font-weight: 600;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: background 0.2s ease;
+}
+
+.btn-dashboard:hover {
+  background-color: #1e40af;
 }
 
 .formulario-estilizado {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .grid-formulario {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem 2rem;
-  align-items: start;
-}
-
-.campo-formulario {
-  display: flex;
-  flex-direction: column;
 }
 
 .campo-formulario label {
-  margin-bottom: 0.4rem;
   font-weight: 600;
-  font-size: 1rem;
-  color: #34495e;
+  margin-bottom: 0.4rem;
+  color: #374151;
 }
 
-.campo-formulario input[type="text"],
-.campo-formulario input[type="email"],
-.campo-formulario input[type="password"],
-.campo-formulario input[type="url"] {
+.campo-formulario input {
   padding: 0.6rem 1rem;
   font-size: 1rem;
   border-radius: 8px;
-  border: 1.5px solid #ced4da;
+  border: 1.5px solid #d1d5db;
   transition: border-color 0.3s ease;
-  background-color: #fff;
+  background-color: #f9fafb;
+}
+
+.campo-formulario input:focus {
+  outline: none;
+  border-color: #2563eb;
 }
 
 .campo-formulario input:disabled {
-  background-color: #e9ecef;
-  cursor: not-allowed;
-  color: #6c757d;
-}
-
-.campo-formulario input:focus:not(:disabled) {
-  outline: none;
-  border-color: #3a80e9;
-  box-shadow: 0 0 5px rgba(58, 128, 233, 0.4);
+  background-color: #f1f5f9;
+  color: #6b7280;
 }
 
 .ayuda {
   font-size: 0.85rem;
-  color: #6c757d;
-  margin-top: 0.2rem;
+  color: #6b7280;
+  margin-top: 0.3rem;
 }
 
 .vista-previa {
-  grid-column: 3; /* ocupa la tercera columna */
   text-align: center;
-  margin-top: 1rem;
-}
-
-.vista-previa p {
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #34495e;
+  margin-top: 0.5rem;
 }
 
 .vista-previa img {
-  border-radius: 50%;
-  border: 3px solid #2980b9;
-  max-width: 150px;
-  height: auto;
+  width: 130px;
+  height: 130px;
   object-fit: cover;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border-radius: 50%;
+  border: 3px solid #2563eb;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.acciones-formulario {
+  text-align: center;
 }
 
 .btn {
   cursor: pointer;
-  font-weight: 700;
-  border-radius: 8px;
+  font-weight: 600;
   border: none;
-  padding: 0.8rem 1.5rem;
-  font-size: 1.1rem;
-  user-select: none;
-  transition: background-color 0.3s ease;
-  color: white;
+  border-radius: 8px;
+  padding: 0.75rem 1.6rem;
+  font-size: 1rem;
+  transition: background 0.3s ease;
 }
 
 .btn-guardar {
-  background-color: #2980b9;
-  align-self: center;
-  width: 180px;
+  background-color: #2563eb;
+  color: white;
 }
 
-.btn-guardar:hover,
-.btn-guardar:focus {
-  background-color: #1f6391;
-  outline: none;
+.btn-guardar:hover {
+  background-color: #1d4ed8;
 }
 
 .form-cerrar-sesion {
-  margin-top: 2rem;
+  margin-top: 2.5rem;
   text-align: center;
 }
 
-.btn-cerrar-sesion {
-  background-color: #e74c3c;
-  padding: 0.7rem 2rem;
-  font-size: 1.1rem;
-  width: 180px;
-  cursor: pointer;
+.btn-cerrar {
+  background-color: #ef4444;
+  color: white;
 }
 
-.btn-cerrar-sesion:hover,
-.btn-cerrar-sesion:focus {
-  background-color: #c0392b;
-  outline: none;
-}
-
-/* Responsive */
-
-@media (max-width: 960px) {
-  .grid-formulario {
-    grid-template-columns: 1fr 1fr; /* dos columnas en tablets */
-  }
-  .vista-previa {
-    grid-column: 1 / -1; /* ocupa todo ancho */
-    margin-top: 1.5rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .grid-formulario {
-    grid-template-columns: 1fr; /* columna única en móvil */
-  }
-  .btn-guardar,
-  .btn-cerrar-sesion {
-    width: 100%;
-  }
+.btn-cerrar:hover {
+  background-color: #dc2626;
 }
 </style>
 {% endblock %}

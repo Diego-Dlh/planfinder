@@ -20,3 +20,17 @@ def listar_planes():
 
 def obtener_plan_por_id(plan_id):
     return PlanTuristico.query.get(plan_id)
+
+def actualizar_plan(plan, nombre, descripcion, precio, duracion, categoria_id, ubicacion_id):
+    plan.nombre = nombre
+    plan.descripcion = descripcion
+    plan.precio = precio
+    plan.duracion = duracion
+    plan.categoria_id = categoria_id
+    plan.ubicacion_id = ubicacion_id
+    db.session.commit()
+    return plan
+
+def eliminar_plan(plan):
+    db.session.delete(plan)
+    db.session.commit()
