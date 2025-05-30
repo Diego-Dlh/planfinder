@@ -140,6 +140,7 @@ form button:hover {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
+  padding-top: 2rem;
 }
 
 .tarjeta-plan {
@@ -247,29 +248,7 @@ form button:hover {
   font-weight: 500;
 }
 
-/* =========== RESPONSIVE =========== */
-@media (max-width: 768px) {
-  .grid-planes {
-    grid-template-columns: 1fr;
-  }
-
-  .info-atributos {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .nav-principal {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .acciones-principales {
-    flex-direction: column;
-    gap: 1rem;
-  }
-}
-
-/* =========== ESTRELLAS PARA CALIFICACIÓN =========== */
+/* =========== ESTRELLAS =========== */
 .estrellas {
   display: flex;
   justify-content: center;
@@ -295,13 +274,7 @@ form button:hover {
   color: #facc15;
 }
 
-.grid-planes {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
-  padding-top: 2rem;
-}
-
+/* =========== CARD PLAN EXTRA =========== */
 .card-plan {
   display: flex;
   flex-direction: column;
@@ -338,4 +311,63 @@ form button:hover {
   color: #1f2937;
   padding: 1rem;
   text-align: left;
+}
+
+/* =========== RESPONSIVE =========== */
+@media (max-width: 768px) {
+  .grid-planes {
+    grid-template-columns: 1fr;
+  }
+
+  .info-atributos {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-principal {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .acciones-principales {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .detalle-plan-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  .titulo-plan {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+
+  .img-miniatura {
+    width: 100%;
+    height: auto;
+  }
+
+  .btn, .btn-detalles, .btn-secundario {
+    width: 100%;
+    text-align: center;
+  }
+
+  .footer {
+    font-size: 0.85rem;
+  }
+
+  .img-container {
+    height: auto;
+    max-height: 200px;
+  }
+
+  .nombre-plan {
+    text-align: center;
+  }
+
+  main {
+    padding: 0 1rem;
+  }
 }
