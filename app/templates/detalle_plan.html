@@ -192,7 +192,7 @@
   <div class="hero-info">
     <h1>{{ plan.nombre }}</h1>
     <p>{{ plan.descripcion }}</p>
-    <a href="#" class="btn">FAVORITO</a>
+    <a href="{{ url_for('favoritos.agregar', plan_id=plan.id) }}" class="btn">FAVORITO</a>
   </div>
 </section>
 

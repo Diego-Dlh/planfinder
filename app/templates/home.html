@@ -3,7 +3,7 @@
 
 {% block content %}
 <!-- Hero principal -->
-<section class="hero">
+<section class="hero hero-bg">
   <div class="contenido">
     <h1>Descubre, Explora y Vive Santa Marta como Nunca Antes 🌴</h1>
     <p>
@@ -89,19 +89,39 @@
 <style>
 /* HERO */
 .hero {
-  background: linear-gradient(135deg, #f4f7fa 0%, #e5ecf6 100%);
-  text-align: center;
-  padding: 4rem 2rem;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  background-image: url('/static/img/hero-santa-marta.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 6rem 2rem;
+  color: white;
+  position: relative;
 }
+
+.hero .contenido {
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(61, 56, 56, 0.32); /* más oscuro que antes */
+  padding: 2rem;
+  border-radius: 16px;
+  color: #f9fafb;
+}
+
 .hero h1 {
+  color: #ffffff;
   font-size: 2.5rem;
   font-weight: 700;
-  color: #111827;
 }
+
 .hero p {
-  max-width: 600px;
-  margin: 1rem auto 2rem;
-  color: #4b5563;
+  color: #e5e7eb;
+  font-size: 1rem;
+  margin-top: 1rem;
+  line-height: 1.6;
+}
+4b5563;
 }
 .btn-hero {
   background-color: #2563eb;
